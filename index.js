@@ -29,6 +29,8 @@ var BASE_PLAYER_DAMAGE = 3;
 var STAMINA_USAGE = 1.2;
 var BASE_STAMINA_REGEN = 0.5;
 
+var MAX_VISION_RADIUS = 800;
+
 //item name, damage multiplier (over basic attack), seconds before reuse, range
 var ITEM_STATS = [["", 1, 0.3, 90], ["dagger", 2, 0.4, 90], ["sword", 3, 0.7, 150], ["firstaid", 1, 0.8, 90], ["empty_bottle", 1, 0.8, 90], ["full_bottle", 1, 0.8, 90],  ["meat", 1, 0.8, 90]];
 var TOTAL_SPAWN_RATE = 7.6;
@@ -75,18 +77,6 @@ Array.prototype.clean = function(deleteValue) {
 
 function distFrom(xOne, yOne, xTwo, yTwo){
 	return Math.sqrt((xOne-xTwo)*(xOne-xTwo) + (yOne-yTwo)*(yOne-yTwo));
-}
-
-function packageGame(){
-	game.stage = stage;
-	game.players = players;
-	game.countdown = countdown;
-	game.obstacles = obstacles;
-	game.map_radius = map_radius;
-	game.map_center_x = MAP_CENTER_X;
-	game.map_center_y = MAP_CENTER_Y;
-	game.items = items;
-	game.creatures = creatures;
 }
 
 function handleLobby(){
@@ -167,6 +157,8 @@ function addNewPlayer(socket_id, username, brawn_points, intelligence_points, ag
 	player.thirst = 100;
 	
 	player.attackAnimationStep = 0;
+	
+	player.player_knowledge = {};
 	
 	players.push(player);
 }
@@ -476,6 +468,58 @@ function solvePhysics(){
 				delete players[i];
 			}
 			
+			for(var q = 0; q < players.length; q++){
+				players[q].player_knowledge = [];
+				
+				var player_obstacles = [];
+				var player_players = [];
+				var player_items = [];
+				var player_creatures = [];
+				
+				var vertices = [];
+				
+				for(var r = 0; r < obstacles.length; r++){
+					if(distFrom(obstacles[r].xPos, obstacles[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+						player_obstacles.push(obstacles[r]);
+						vertices.push([obstacles[r].xPos, obstacles[r].yPos]);
+					}
+				}
+				
+				for(var r = 0; r < players.length; r++){
+					if(distFrom(players[r].xPos, players[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+						player_players.push(players[r]);
+						vertices.push([players[r].xPos, players[r].yPos]);
+					}
+				}
+				
+				for(var r = 0; r < items.length; r++){
+					if(distFrom(items[r].xPos, items[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+						player_items.push(items[r]);
+						vertices.push([items[r].xPos, items[r].yPos]);
+					}
+				}
+				
+				for(var r = 0; r < creatures.length; r++){
+					if(distFrom(creatures[r].xPos, creatures[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+						player_creatures.push(creatures[r]);
+						vertices.push([creatures[r].xPos, creatures[r].yPos]);
+					}
+				}
+				
+				//add in stuff that removes everything in shadows
+				
+				
+				players[q].player_knowledge.stage = stage;
+				players[q].player_knowledge.players = player_players;
+				players[q].player_knowledge.countdown = countdown;
+				players[q].player_knowledge.obstacles = player_obstacles;
+				players[q].player_knowledge.map_radius = map_radius;
+				players[q].player_knowledge.map_center_x = MAP_CENTER_X;
+				players[q].player_knowledge.map_center_y = MAP_CENTER_Y;
+				players[q].player_knowledge.items = player_items;
+				players[q].player_knowledge.creatures = player_creatures;
+			}
+			
 			players.clean(undefined);
 			obstacles.clean(undefined);
 			items.clean(undefined);
@@ -751,8 +795,14 @@ io.on('connection', function(socket){
 	
 });
 
+function sendAllGameData(){
+	for(var i = 0; i < players.length; i++){
+		io.emit('all_game_data', players[i].player_knowledge);
+	}
+}
+
 lobby_trigger = setInterval(function(){handleLobby();}, 1000);
-game_trigger = setInterval(function(){solvePhysics(); packageGame(); if(stage != "END"){io.emit('all_game_data', game);}  }, 1000/FRAME_RATE);
+game_trigger = setInterval(function(){solvePhysics(); packageGame(); if(stage != "END"){sendAllGameData();}  }, 1000/FRAME_RATE);
 
 
 http.listen(PORT_NUMBER, function(){console.log('listening on *:' + PORT_NUMBER);});
