@@ -689,7 +689,7 @@ function generateMap(mapRadius){
 }
 
 function packageAllGameData(q){
-		var player_knowledge = [];
+		var player_knowledge = {};
 				
 		var player_obstacles = [];
 		var player_players = [];
@@ -746,8 +746,7 @@ function packageAllGameData(q){
 function sendAllGameData(){
 	for(var i = 0; i < players.length; i++){
 		if(typeof players[i] !== 'undefined'){
-			player_knowledge = packageAllGameData(i);
-			io.sockets.connected[players[i].socket_id].emit('all_game_data', player_knowledge);
+			io.sockets.connected[players[i].socket_id].emit('all_game_data', packageAllGameData(i));
 		}
 	}
 }
