@@ -15,7 +15,13 @@
 		</style>
 	</head>
 	<body style="margin-left:0px; margin-right:0px; margin-top:0px; margin-bottom:0px; font-family:'my_font';">
-		
+		<div id="spectatorDiv">
+			
+				<span style="font-size:80px;"><center><b>DON'T GO ANYWHERE!</b></center></span>
+				<span style="font-size:50px;"><center><div id="spectatorCountdownDiv">Next game starting in at most <b>200</b> seconds.</div></center></span>
+				<span style="font-size:30px;"><i><center>most games end in much less time than the number above</center></i></span>
+			
+		</div>
 		<div id="gameDiv">
 			<canvas id="myCanvas" width="800" height="800"></canvas>
 			<script>
@@ -179,6 +185,9 @@
 		var fivekeydown = false;
 		var submitted = false;
 		
+		var isActivePlayer = false;
+		var check_spectate_trigger;
+		
 		function sendData(){
 			var data = [mouse_X, mouse_Y, is_clicking, rightkeydown, leftkeydown, upkeydown, downkeydown, shiftkeydown, spacekeydown, ekeydown, enterkeydown, onekeydown, twokeydown, threekeydown, fourkeydown, fivekeydown];
 			socket.emit('user_input_state', data);
@@ -260,6 +269,7 @@
 			if(data.stage == "STATS"){
 				document.getElementById("gameDiv").style.display = "none";
 				document.getElementById("statsDiv").style.display = "block";
+				document.getElementById("spectatorDiv").style.display = "none";
 				document.getElementById("countdownDiv").innerHTML = data.countdown;
 				if(!submitted){
 					document.getElementById("submitButton").style.display = "block";
@@ -268,13 +278,29 @@
 			if(data.stage == "GAMEPLAY"){
 				console.log("YOU ARE IN THE GAME");
 				submitted = false;
-				document.getElementById("gameDiv").style.display = "block";
 				document.getElementById("statsDiv").style.display = "none";
+				if(isActivePlayer){
+					document.getElementById("spectatorDiv").style.display = "none";
+					document.getElementById("gameDiv").style.display = "block";
+				}else{
+					document.getElementById("spectatorDiv").style.display = "block";
+					var timeLeft = Math.round(Math.sqrt((data.map_radius-50)/20)*25) - 100;
+					if(timeLeft <= 0){
+						document.getElementById("spectatorCountdownDiv").innerHTML = "Next game starting in <u>at most</u> <b>" + timeLeft + "</b> seconds.";
+					}else{
+						document.getElementById("spectatorCountdownDiv").innerHTML = "Game starting VERY soon...";
+					}
+					
+					document.getElementById("gameDiv").style.display = "none";
+				}
 			}
 		});
 		
 		socket.on('all_game_data', function(data){
 			if(data.stage == "GAMEPLAY"){
+				isActivePlayer = true;
+				clearInterval(check_spectate_trigger);
+				check_spectate_trigger = setTimeout(function(){isActivePlayer = false;}, 2000); //changes to specator mode if no frames recieved for 2 seconds
 				
 				var window_dime = [window.innerWidth, window.innerHeight];
 				socket.emit('window_size_data', window_dime);

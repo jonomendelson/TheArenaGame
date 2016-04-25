@@ -774,6 +774,7 @@ function sendAllGameData(){
 	var data = {};
 	data.stage = stage;
 	data.countdown = countdown;
+	data.map_radius = map_radius;
 	io.emit('basic_data', data);
 }
 
