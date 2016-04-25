@@ -1,2 +1,3 @@
  - add electric fence graphic
  - make everything scale relative to screen size - zooming out or having different resoltion screens should not affect gameplay
+- think of an ACTUAL good name
