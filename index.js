@@ -749,6 +749,10 @@ function sendAllGameData(){
 			io.sockets.connected[players[i].socket_id].emit('all_game_data', packageAllGameData(i));
 		}
 	}
+	var data = {};
+	data.stage = stage;
+	data.countdown = countdown;
+	io.emit('basic_data', data);
 }
 
 app.set('port', PORT_NUMBER);

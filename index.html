@@ -254,9 +254,7 @@
 			my_socket_id = socket_id;
 		});
 		
-		
-		socket.on('all_game_data', function(data){
-			console.log(data);
+		socket.on('basic_data', function(data){
 			if(data.stage == "STATS"){
 				document.getElementById("gameDiv").style.display = "none";
 				document.getElementById("statsDiv").style.display = "block";
@@ -264,12 +262,17 @@
 				if(!submitted){
 					document.getElementById("submitButton").style.display = "block";
 				}
-				
-			}else if(data.stage == "GAMEPLAY"){
+			}
+			if(data.stage == "GAMEPLAY"){
 				console.log("YOU ARE IN THE GAME");
 				submitted = false;
 				document.getElementById("gameDiv").style.display = "block";
 				document.getElementById("statsDiv").style.display = "none";
+			}
+		});
+		
+		socket.on('all_game_data', function(data){
+			if(data.stage == "GAMEPLAY"){
 				
 				var window_dime = [window.innerWidth, window.innerHeight];
 				socket.emit('window_size_data', window_dime);
