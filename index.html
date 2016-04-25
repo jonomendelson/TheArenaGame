@@ -285,7 +285,7 @@
 				}else{
 					document.getElementById("spectatorDiv").style.display = "block";
 					var timeLeft = Math.round(Math.sqrt((data.map_radius-50)/20)*25) - 100;
-					if(timeLeft <= 0){
+					if(timeLeft > 0){
 						document.getElementById("spectatorCountdownDiv").innerHTML = "Next game starting in <u>at most</u> <b>" + timeLeft + "</b> seconds.";
 					}else{
 						document.getElementById("spectatorCountdownDiv").innerHTML = "Game starting VERY soon...";
