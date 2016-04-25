@@ -296,6 +296,7 @@
 			}
 		});
 		
+		
 		socket.on('all_game_data', function(data){
 			if(data.stage == "GAMEPLAY"){
 				isActivePlayer = true;
@@ -308,7 +309,7 @@
 				clear();
 				
 				
-
+				console.log(data.edges);
 				
 				for(var i = 0; i < data.players.length; i++){
 					if(typeof data.players[i] !== 'undefined'){
