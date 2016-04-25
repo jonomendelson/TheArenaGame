@@ -248,6 +248,8 @@
 		
 		function clear(){
 			ctx.clearRect(0, 0, c.width, c.height);
+			ctx.fillStyle = "#000000";
+			ctx.fillRect(0, 0, c.width, c.height);
 		}
 		
 		socket.on('your_socket_id', function(socket_id){
@@ -294,12 +296,17 @@
 
 				for(var i = -2; i < (window.innerWidth/40)+1; i++){
 					for(var j = -2; j < (window.innerHeight/40)+1; j++){
-						//var deltaX = i*40 - (cameraX%40) +cameraX;
-						//var deltaY = j*40 - (cameraY%40) +cameraY;
+						var drawX = i*40 - (cameraX % 40);
+						var drawY = j*40 - (cameraY % 40);
+						var mapDrawCenterX = data.map_center_x - cameraX;
+						var mapDrawCenterY = data.map_center_y - cameraY;
+						var deltaX = drawX - mapDrawCenterX;
+						var deltaY = drawY - mapDrawCenterY;
+						
 
-						//if(Math.sqrt((deltaX*deltaX) + (deltaY*deltaY)) < data.map_radius){
-							ctx.drawImage(grass, i*40 - (cameraX % 40), j*40 - (cameraY % 40));
-						//}
+						if(Math.sqrt((deltaX*deltaX) + (deltaY*deltaY)) < data.map_radius + 60){
+							ctx.drawImage(grass, drawX, drawY);
+						}
 						
 					}
 				}
@@ -357,7 +364,8 @@
 				ctx.beginPath();
 				ctx.arc(data.map_center_x - cameraX, data.map_center_y - cameraY, data.map_radius, 0, 2*Math.PI);
 				ctx.stroke();
-				
+				ctx.arc(data.map_center_x - cameraX, data.map_center_y - cameraY, data.map_radius+50, 0, 2*Math.PI);
+				ctx.stroke();
 				
 				for(var i = 0; i < data.players.length; i++){
 					if(typeof data.players[i] !== 'undefined'){
