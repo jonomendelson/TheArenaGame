@@ -468,57 +468,7 @@ function solvePhysics(){
 				delete players[i];
 			}
 			
-			for(var q = 0; q < players.length; q++){
-				players[q].player_knowledge = [];
-				
-				var player_obstacles = [];
-				var player_players = [];
-				var player_items = [];
-				var player_creatures = [];
-				
-				var vertices = [];
-				
-				for(var r = 0; r < obstacles.length; r++){
-					if(distFrom(obstacles[r].xPos, obstacles[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
-						player_obstacles.push(obstacles[r]);
-						vertices.push([obstacles[r].xPos, obstacles[r].yPos]);
-					}
-				}
-				
-				for(var r = 0; r < players.length; r++){
-					if(distFrom(players[r].xPos, players[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
-						player_players.push(players[r]);
-						vertices.push([players[r].xPos, players[r].yPos]);
-					}
-				}
-				
-				for(var r = 0; r < items.length; r++){
-					if(distFrom(items[r].xPos, items[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
-						player_items.push(items[r]);
-						vertices.push([items[r].xPos, items[r].yPos]);
-					}
-				}
-				
-				for(var r = 0; r < creatures.length; r++){
-					if(distFrom(creatures[r].xPos, creatures[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
-						player_creatures.push(creatures[r]);
-						vertices.push([creatures[r].xPos, creatures[r].yPos]);
-					}
-				}
-				
-				//add in stuff that removes everything in shadows
-				
-				
-				players[q].player_knowledge.stage = stage;
-				players[q].player_knowledge.players = player_players;
-				players[q].player_knowledge.countdown = countdown;
-				players[q].player_knowledge.obstacles = player_obstacles;
-				players[q].player_knowledge.map_radius = map_radius;
-				players[q].player_knowledge.map_center_x = MAP_CENTER_X;
-				players[q].player_knowledge.map_center_y = MAP_CENTER_Y;
-				players[q].player_knowledge.items = player_items;
-				players[q].player_knowledge.creatures = player_creatures;
-			}
+			
 			
 			players.clean(undefined);
 			obstacles.clean(undefined);
@@ -738,6 +688,70 @@ function generateMap(mapRadius){
 	
 }
 
+function packageAllGameData(q){
+		var player_knowledge = [];
+				
+		var player_obstacles = [];
+		var player_players = [];
+		var player_items = [];
+		var player_creatures = [];
+				
+		var vertices = [];
+				
+		for(var r = 0; r < obstacles.length; r++){
+			if(distFrom(obstacles[r].xPos, obstacles[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+				player_obstacles.push(obstacles[r]);
+				vertices.push([obstacles[r].xPos, obstacles[r].yPos]);
+			}
+		}
+				
+		for(var r = 0; r < players.length; r++){
+			if(distFrom(players[r].xPos, players[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+				player_players.push(players[r]);
+				vertices.push([players[r].xPos, players[r].yPos]);
+			}
+		}
+				
+		for(var r = 0; r < items.length; r++){
+			if(distFrom(items[r].xPos, items[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+				player_items.push(items[r]);
+				vertices.push([items[r].xPos, items[r].yPos]);
+			}
+		}
+		
+		for(var r = 0; r < creatures.length; r++){
+			if(distFrom(creatures[r].xPos, creatures[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+				player_creatures.push(creatures[r]);
+				vertices.push([creatures[r].xPos, creatures[r].yPos]);
+			}
+		}
+				
+		//add in stuff that removes everything in shadows
+				
+				
+		player_knowledge.stage = stage;
+		player_knowledge.players = player_players;
+		player_knowledge.countdown = countdown;
+		player_knowledge.obstacles = player_obstacles;
+		player_knowledge.map_radius = map_radius;
+		player_knowledge.map_center_x = MAP_CENTER_X;
+		player_knowledge.map_center_y = MAP_CENTER_Y;
+		player_knowledge.items = player_items;
+		player_knowledge.creatures = player_creatures;
+		
+		return player_knowledge;
+	
+}
+
+function sendAllGameData(){
+	for(var i = 0; i < players.length; i++){
+		if(typeof players[i] !== 'undefined'){
+			player_knowledge = packageAllGameData(i);
+			io.sockets.connected[players[i].socket_id].emit('all_game_data', player_knowledge);
+		}
+	}
+}
+
 app.set('port', PORT_NUMBER);
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html');
@@ -795,14 +809,10 @@ io.on('connection', function(socket){
 	
 });
 
-function sendAllGameData(){
-	for(var i = 0; i < players.length; i++){
-		io.emit('all_game_data', players[i].player_knowledge);
-	}
-}
+
 
 lobby_trigger = setInterval(function(){handleLobby();}, 1000);
-game_trigger = setInterval(function(){solvePhysics(); packageGame(); if(stage != "END"){sendAllGameData();}  }, 1000/FRAME_RATE);
+game_trigger = setInterval(function(){solvePhysics();  if(stage != "END"){ sendAllGameData();}  }, 1000/FRAME_RATE);
 
 
 http.listen(PORT_NUMBER, function(){console.log('listening on *:' + PORT_NUMBER);});

@@ -256,6 +256,7 @@
 		
 		
 		socket.on('all_game_data', function(data){
+			console.log(data);
 			if(data.stage == "STATS"){
 				document.getElementById("gameDiv").style.display = "none";
 				document.getElementById("statsDiv").style.display = "block";
@@ -265,6 +266,7 @@
 				}
 				
 			}else if(data.stage == "GAMEPLAY"){
+				console.log("YOU ARE IN THE GAME");
 				submitted = false;
 				document.getElementById("gameDiv").style.display = "block";
 				document.getElementById("statsDiv").style.display = "none";
