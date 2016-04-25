@@ -193,19 +193,19 @@ function solvePhysics(){
 	}
 	
 	for(var n = 0; n < creatures.length; n++){
-		if(distFrom(creatures[n].xPos, creatures[n].yPos, MAP_CENTER_X, MAP_CENTER_Y) > map_radius){
+		if(distFrom(creatures[n].xPos, creatures[n].yPos, MAP_CENTER_X, MAP_CENTER_Y) > map_radius+120){
 			delete creatures[n];
 		}
 	}
 	
 	for(var n = 0; n < items.length; n++){
-		if(distFrom(items[n].xPos, items[n].yPos, MAP_CENTER_X, MAP_CENTER_Y) > map_radius){
+		if(distFrom(items[n].xPos, items[n].yPos, MAP_CENTER_X, MAP_CENTER_Y) > map_radius+120){
 			delete items[n];
 		}
 	}
 	
 	for(var n = 0; n < obstacles.length; n++){
-		if(distFrom(obstacles[n].xPos, obstacles[n].yPos, MAP_CENTER_X, MAP_CENTER_Y) > map_radius){
+		if(distFrom(obstacles[n].xPos, obstacles[n].yPos, MAP_CENTER_X, MAP_CENTER_Y) > map_radius+120){
 			delete obstacles[n];
 		}
 	}
