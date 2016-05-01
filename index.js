@@ -47,6 +47,8 @@ var PLAYER_FRICTION = 0.95;
 var WALL_BOUNCE = 10;
 var WALL_DAMAGE = 25;
 
+var FIRST_AID_HEAL = 20;
+
 var game = {};
 
 var map_radius = START_MAP_RADIUS;
@@ -455,7 +457,7 @@ function solvePhysics(){
 			
 			if(players[i].isEnterDown){
 				if(players[i].inventory[players[i].inventoryFocusIndex] == "firstaid"){
-					players[i].health = Math.min(players[i].max_health, players[i].health += 40);
+					players[i].health = Math.min(players[i].max_health, players[i].health += FIRST_AID_HEAL);
 					players[i].inventory[players[i].inventoryFocusIndex] = "";
 				}
 				if(players[i].inventory[players[i].inventoryFocusIndex] == "full_bottle"){
@@ -727,11 +729,7 @@ function createVertex(xPos, yPos){
 	return vertex;
 }
 
-//function createShadow(vertex_a, vertex_b, vertex_c, vertex_d){ maybe not - just do with points and start b/c easier (check if segment connecting player and object intersects edge)
-	
-//}
-
-function packageAllGameData(q){ //q is the player whose data we are packaging
+function packageAllGameData(q){
 		var player_knowledge = {};
 				
 		var player_obstacles = [];
@@ -741,26 +739,23 @@ function packageAllGameData(q){ //q is the player whose data we are packaging
 				
 		var vertices = [];
 		var edges = [];
-		var shadows = [];
 				
-		for(var r = 0; r < players.length; r++){ //r is the player we are creating a shadow for
-			if(r != q){ //no shadow for current player
-				if(distFrom(players[r].xPos, players[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
-					player_players.push(players[r]);
-					var vertex1 = createVertex(players[r].xPos, players[r].yPos);
-					vertices.push(vertex1);
-					var vertex2 = createVertex(players[r].xPos + BLOCK_SIZE, players[r].yPos);
-					vertices.push(vertex2);
-					var vertex3 = createVertex(players[r].xPos+BLOCK_SIZE, players[r].yPos+BLOCK_SIZE);
-					vertices.push(vertex3);
-					var vertex4 = createVertex(players[r].xPos, players[r].yPos+BLOCK_SIZE);
-					vertices.push(vertex4);		
+		for(var r = 0; r < players.length; r++){
+			if(distFrom(players[r].xPos, players[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+				player_players.push(players[r]);
+				var vertex1 = createVertex(players[r].xPos, players[r].yPos);
+				vertices.push(vertex1);
+				var vertex2 = createVertex(players[r].xPos + BLOCK_SIZE, players[r].yPos);
+				vertices.push(vertex2);
+				var vertex3 = createVertex(players[r].xPos+BLOCK_SIZE, players[r].yPos+BLOCK_SIZE);
+				vertices.push(vertex3);
+				var vertex4 = createVertex(players[r].xPos, players[r].yPos+BLOCK_SIZE);
+				vertices.push(vertex4);		
 
-					edges.push(createEdge(vertex1, vertex2, players[q], players[r]));
-					edges.push(createEdge(vertex2, vertex3, players[q], players[r]));
-					edges.push(createEdge(vertex3, vertex4, players[q], players[r]));
-					edges.push(createEdge(vertex4, vertex1, players[q], players[r]));
-				}
+				edges.push(createEdge(vertex1, vertex2, players[q], players[r]));
+				edges.push(createEdge(vertex2, vertex3, players[q], players[r]));
+				edges.push(createEdge(vertex3, vertex4, players[q], players[r]));
+				edges.push(createEdge(vertex4, vertex1, players[q], players[r]));
 			}
 		}
 				

@@ -276,7 +276,6 @@
 				}
 			}
 			if(data.stage == "GAMEPLAY"){
-				console.log("YOU ARE IN THE GAME");
 				submitted = false;
 				document.getElementById("statsDiv").style.display = "none";
 				if(isActivePlayer){
@@ -307,9 +306,6 @@
 				socket.emit('window_size_data', window_dime);
 				
 				clear();
-				
-				
-				console.log(data.edges);
 				
 				for(var i = 0; i < data.players.length; i++){
 					if(typeof data.players[i] !== 'undefined'){
@@ -374,7 +370,7 @@
 				}
 				
 				for(var i = 0; i < data.creatures.length; i++){
-					if(typeof data.creatures[j] !== 'undefined'){
+					if(typeof data.creatures[i] !== 'undefined'){
 					if(data.creatures[i].type == "WOLF"){
 						ctx.drawImage(wolf, data.creatures[i].xPos - cameraX, data.creatures[i].yPos - cameraY);
 					}else if(data.creatures[i].type == "PIG"){
