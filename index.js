@@ -29,7 +29,7 @@ var BASE_PLAYER_DAMAGE = 3;
 var STAMINA_USAGE = 1.2;
 var BASE_STAMINA_REGEN = 0.5;
 
-var MAX_VISION_RADIUS = 800;
+var MAX_VISION_RADIUS = 600;
 
 //item name, damage multiplier (over basic attack), seconds before reuse, range
 var ITEM_STATS = [["", 1, 0.3, 90], ["dagger", 2, 0.4, 90], ["sword", 3, 0.7, 150], ["firstaid", 1, 0.8, 90], ["empty_bottle", 1, 0.8, 90], ["full_bottle", 1, 0.8, 90],  ["meat", 1, 0.8, 90]];
@@ -520,7 +520,7 @@ function creatureAI(creature){
 				creature.targetY = creature.yPos + unitY*160;
 				creature.unitX = unitX;
 				creature.unitY = unitY;
-			}
+			}	
 			creature.xPos += creature.unitX * WOLF_MOVE_SPEED/2;
 			creature.yPos += creature.unitY * WOLF_MOVE_SPEED/2;
 		}

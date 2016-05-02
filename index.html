@@ -71,8 +71,9 @@
 		var ctx = c.getContext("2d");
 		
 		ctx.translate(window.innerWidth/2, window.innerHeight/2);
-		ctx.scale(2, 2);
+		ctx.scale((window.innerHeight+window.innerWidth)/1600, (window.innerHeight+window.innerWidth)/1600);
 		ctx.translate(-window.innerWidth/2, -window.innerHeight/2);
+		
 		
 		var my_socket_id;
 		
@@ -248,6 +249,9 @@
 		window.onresize = function(e){
 			document.getElementById("myCanvas").width=window.innerWidth;
 			document.getElementById("myCanvas").height=window.innerHeight;
+			ctx.translate(window.innerWidth/2, window.innerHeight/2);
+			ctx.scale((window.innerHeight+window.innerWidth)/1600, (window.innerHeight+window.innerWidth)/1600);
+			ctx.translate(-window.innerWidth/2, -window.innerHeight/2);
 		}
 	
 
