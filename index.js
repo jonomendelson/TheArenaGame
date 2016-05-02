@@ -505,7 +505,25 @@ function solvePhysics(){
 function creatureAI(creature){
 	if(typeof creature !== 'undefined' && players.length > 0){
 	if(creature.health == creature.max_health){
-		
+		if(creature.type == "WOLF"){
+			if(distFrom(creature.xPos, creature.yPos, creature.targetX, creature.targetY) < 20){
+				var targetX = Math.random()*2 - 1;
+				var targetY = Math.random()*2 - 1;
+			
+				var distance = Math.sqrt(targetX*targetX + targetY*targetY);
+			
+				var unitX = targetX/distance;
+				var unitY = targetY/distance;
+				
+			
+				creature.targetX = creature.xPos + unitX*160;
+				creature.targetY = creature.yPos + unitY*160;
+				creature.unitX = unitX;
+				creature.unitY = unitY;
+			}
+			creature.xPos += creature.unitX * WOLF_MOVE_SPEED/2;
+			creature.yPos += creature.unitY * WOLF_MOVE_SPEED/2;
+		}
 	}else{
 		if(creature.type == "WOLF"){
 			var deltaX = (creature.xPos-nearestPlayer(creature).xPos);
@@ -560,6 +578,10 @@ function addNewCreature(type, mapRadius){
 	creature.health = creature.max_health;
 	creature.type = type;
 	creature.direction = 0;
+	creature.targetX = creature.xPos;
+	creature.targetY = creature.yPos;
+	creature.unitX = 0;
+	creature.unitY = 0;
 	creatures.push(creature);
 }
 
