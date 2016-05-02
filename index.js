@@ -751,6 +751,57 @@ function createVertex(xPos, yPos){
 	return vertex;
 }
 
+function createShadow(origin_vertex, cast_vertex_a, cast_vertex_b){
+	var shadow = {};
+	shadow.origin_vertex = origin_vertex;
+	shadow.cast_vertex_a = cast_vertex_a;
+	shadow.cast_vertex_b = cast_vertex_b;
+	return shadow;
+}
+
+function onSegment(p, q, r)
+{
+    if (q.xPos <= max(p.xPos, r.xPos) && q.xPos >= min(p.xPos, r.xPos) && q.yPos <= max(p.yPos, r.yPos) && q.yPos >= min(p.yPos, r.yPos)) return true;
+    return false;
+}
+ 
+function orientation(p, q, r)
+{
+    var val = (q.yPos - p.yPos) * (r.xPos - q.xPos) -(q.xPos - p.xPos) * (r.yPos - q.yPos);
+ 
+    if (val == 0) return 0;  // colinear
+ 
+    return (val > 0)? 1: 2; // clock or counterclock wise
+}
+ 
+function doIntersect(p1, q1, p2, q2){
+    // Find the four orientations needed for general and
+    // special cases
+    var o1 = orientation(p1, q1, p2);
+    var o2 = orientation(p1, q1, q2);
+    var o3 = orientation(p2, q2, p1);
+    var o4 = orientation(p2, q2, q1);
+ 
+    // General case
+    if (o1 != o2 && o3 != o4)return true;
+ 
+    // Special Cases
+    // p1, q1 and p2 are colinear and p2 lies on segment p1q1
+    if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+ 
+    // p1, q1 and p2 are colinear and q2 lies on segment p1q1
+    if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+ 
+    // p2, q2 and p1 are colinear and p1 lies on segment p2q2
+    if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+ 
+     // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+    if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+ 
+    return false; // Doesn't fall in any of the above cases
+}
+ 
+
 function packageAllGameData(q){
 		var player_knowledge = {};
 				
@@ -761,6 +812,7 @@ function packageAllGameData(q){
 				
 		var vertices = [];
 		var edges = [];
+		var shadows = [];
 				
 		for(var r = 0; r < players.length; r++){
 			if(distFrom(players[r].xPos, players[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
@@ -829,6 +881,11 @@ function packageAllGameData(q){
  				return a.distance-b.distance;
 		});
 		
+		for(var r = 0; r < edges.length; r++){
+			//if(typeof edges[r] != undefined){
+				shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_a, edges[r].vertex_b));
+			//}
+		}
 		
 
 		
@@ -843,7 +900,7 @@ function packageAllGameData(q){
 		player_knowledge.items = player_items;
 		player_knowledge.creatures = player_creatures;
 		player_knowledge.draw_length = MAX_VISION_RADIUS;
-		player_knowledge.edges = edges;
+		player_knowledge.shadows = shadows;
 		
 		return player_knowledge;
 	
