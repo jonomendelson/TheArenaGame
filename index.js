@@ -29,7 +29,7 @@ var BASE_PLAYER_DAMAGE = 3;
 var STAMINA_USAGE = 1.2;
 var BASE_STAMINA_REGEN = 0.5;
 
-var MAX_VISION_RADIUS = 600;
+var MAX_VISION_RADIUS = 400;
 
 //item name, damage multiplier (over basic attack), seconds before reuse, range
 var ITEM_STATS = [["", 1, 0.3, 90], ["dagger", 2, 0.4, 90], ["sword", 3, 0.7, 150], ["firstaid", 1, 0.8, 90], ["empty_bottle", 1, 0.8, 90], ["full_bottle", 1, 0.8, 90],  ["meat", 1, 0.8, 90]];
@@ -882,12 +882,30 @@ function packageAllGameData(q){
 		});
 		
 		for(var r = 0; r < edges.length; r++){
-			//if(typeof edges[r] != undefined){
-				shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_a, edges[r].vertex_b));
-			//}
+			if(edges[r].parent_object = players[q]){
+				delete edges[r];
+			}
 		}
 		
-
+		for(var r = edges.length-1; r >= 0; r--){
+			if(typeof edges[r] !== "undefined"){
+				
+				for(var s = 0; s < edges.length; s++){
+					if(typeof edges[s] !== "undefined"){
+						if(doIntersect(createVertex(players[q].xPos, players[q].yPos), createVertex(edges[r].midpoint.xPos, edges[r].midpoint.yPos), edges[s].vertex_a, edges[s].vertex_b)){
+							delete edges[s];
+						}
+					}
+				}
+				
+			}
+		}
+		
+		edges.clean(undefined);
+		
+		
+		
+		//shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_a, edges[r].vertex_b));
 		
 				
 		player_knowledge.stage = stage;

@@ -349,9 +349,26 @@
 				for(var i = 0; i < data.shadows.length; i++){
 					ctx.fillStyle = "#000000";
 					ctx.beginPath();
+					
+					var ray_one_deltaX = data.shadows[i].cast_vertex_a.xPos - data.shadows[i].origin_vertex.xPos;
+					var ray_one_deltaY = data.shadows[i].cast_vertex_a.yPos - data.shadows[i].origin_vertex.yPos;
+					
+					var ray_one_distance = Math.sqrt(ray_one_deltaX*ray_one_deltaX + ray_one_deltaY*ray_one_deltaY);
+					var ray_one_unitX = ray_one_deltaX/ray_one_distance;
+					var ray_one_unitY = ray_one_deltaY/ray_one_distance;
+					
+					var ray_two_deltaX = data.shadows[i].cast_vertex_b.xPos - data.shadows[i].origin_vertex.xPos;
+					var ray_two_deltaY = data.shadows[i].cast_vertex_b.xPos - data.shadows[i].origin_vertex.xPos;	
+
+					var ray_two_distance = Math.sqrt(ray_two_deltaX*ray_two_deltaX + ray_two_deltaY*ray_two_deltaY);
+					var ray_two_unitX = ray_two_deltaX/ray_two_distance;
+					var ray_two_unitY = ray_two_deltaY/ray_two_distance;
+					
 					ctx.moveTo(data.shadows[i].cast_vertex_a.xPos - cameraX, data.shadows[i].cast_vertex_a.yPos - cameraY);
+					ctx.lineTo(data.shadows[i].cast_vertex_a.xPos + ray_one_unitX * data.draw_length - cameraX, data.shadows[i].cast_vertex_a.yPos + ray_one_unitY * data.draw_length - cameraY);
+					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos + ray_two_unitX * data.draw_length - cameraX, data.shadows[i].cast_vertex_b.yPos + ray_two_unitY * data.draw_length - cameraY);
 					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos - cameraX, data.shadows[i].cast_vertex_b.yPos - cameraY);
-					ctx.stroke();
+					ctx.fill();
 					
 				}
 				
