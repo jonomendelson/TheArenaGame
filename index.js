@@ -146,7 +146,7 @@ function addNewPlayer(socket_id, username, brawn_points, intelligence_points, ag
 	
 	player.base_damage = BASE_PLAYER_DAMAGE + player.brawn_points*0.2;
 	
-	player.max_stamina = BASE_PLAYER_STAMINA + player.agility_points*10;
+	player.max_stamina = BASE_PLAYER_STAMINA + player.agility_points*15;
 	player.stamina = player.max_stamina;
 	player.stamina_regen = BASE_STAMINA_REGEN;
 	
@@ -761,7 +761,7 @@ function createShadow(origin_vertex, cast_vertex_a, cast_vertex_b){
 
 function onSegment(p, q, r)
 {
-    if (q.xPos <= max(p.xPos, r.xPos) && q.xPos >= min(p.xPos, r.xPos) && q.yPos <= max(p.yPos, r.yPos) && q.yPos >= min(p.yPos, r.yPos)) return true;
+    if (q.xPos <= Math.max(p.xPos, r.xPos) && q.xPos >= Math.min(p.xPos, r.xPos) && q.yPos <= Math.max(p.yPos, r.yPos) && q.yPos >= Math.min(p.yPos, r.yPos)) return true;
     return false;
 }
  
@@ -817,19 +817,21 @@ function packageAllGameData(q){
 		for(var r = 0; r < players.length; r++){
 			if(distFrom(players[r].xPos, players[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_players.push(players[r]);
-				var vertex1 = createVertex(players[r].xPos, players[r].yPos);
-				vertices.push(vertex1);
-				var vertex2 = createVertex(players[r].xPos + BLOCK_SIZE, players[r].yPos);
-				vertices.push(vertex2);
-				var vertex3 = createVertex(players[r].xPos+BLOCK_SIZE, players[r].yPos+BLOCK_SIZE);
-				vertices.push(vertex3);
-				var vertex4 = createVertex(players[r].xPos, players[r].yPos+BLOCK_SIZE);
-				vertices.push(vertex4);		
+				if(r !== q){
+					var vertex1 = createVertex(players[r].xPos, players[r].yPos);
+					vertices.push(vertex1);
+					var vertex2 = createVertex(players[r].xPos + BLOCK_SIZE, players[r].yPos);
+					vertices.push(vertex2);
+					var vertex3 = createVertex(players[r].xPos+BLOCK_SIZE, players[r].yPos+BLOCK_SIZE);
+					vertices.push(vertex3);
+					var vertex4 = createVertex(players[r].xPos, players[r].yPos+BLOCK_SIZE);
+					vertices.push(vertex4);		
 
-				edges.push(createEdge(vertex1, vertex2, players[q], players[r]));
-				edges.push(createEdge(vertex2, vertex3, players[q], players[r]));
-				edges.push(createEdge(vertex3, vertex4, players[q], players[r]));
-				edges.push(createEdge(vertex4, vertex1, players[q], players[r]));
+					edges.push(createEdge(vertex1, vertex2, players[q], players[r]));
+					edges.push(createEdge(vertex2, vertex3, players[q], players[r]));
+					edges.push(createEdge(vertex3, vertex4, players[q], players[r]));
+					edges.push(createEdge(vertex4, vertex1, players[q], players[r]));
+				}
 			}
 		}
 				
@@ -855,19 +857,35 @@ function packageAllGameData(q){
 		for(var r = 0; r < obstacles.length; r++){
 			if(distFrom(obstacles[r].xPos, obstacles[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_obstacles.push(obstacles[r]);
-				var vertex1 = createVertex(obstacles[r].xPos, obstacles[r].yPos);
-				vertices.push(vertex1);
-				var vertex2 = createVertex(obstacles[r].xPos + BLOCK_SIZE, obstacles[r].yPos);
-				vertices.push(vertex2);
-				var vertex3 = createVertex(obstacles[r].xPos+BLOCK_SIZE, obstacles[r].yPos+BLOCK_SIZE);
-				vertices.push(vertex3);
-				var vertex4 = createVertex(obstacles[r].xPos, obstacles[r].yPos+BLOCK_SIZE);
-				vertices.push(vertex4);		
+				if(obstacles[r].type == "TREE"){
+					var vertex1 = createVertex(obstacles[r].xPos - BLOCK_SIZE*0.5, obstacles[r].yPos - BLOCK_SIZE*0.5);
+					vertices.push(vertex1);
+					var vertex2 = createVertex(obstacles[r].xPos - BLOCK_SIZE*0.5 + BLOCK_SIZE*2, obstacles[r].yPos - BLOCK_SIZE*0.5);
+					vertices.push(vertex2);
+					var vertex3 = createVertex(obstacles[r].xPos - BLOCK_SIZE*0.5 + BLOCK_SIZE*2, obstacles[r].yPos - BLOCK_SIZE*0.5 + BLOCK_SIZE*2);
+					vertices.push(vertex3);
+					var vertex4 = createVertex(obstacles[r].xPos - BLOCK_SIZE*0.5, obstacles[r].yPos - BLOCK_SIZE*0.5 + BLOCK_SIZE*2);
+					vertices.push(vertex4);		
 
-				edges.push(createEdge(vertex1, vertex2, players[q], obstacles[r]));
-				edges.push(createEdge(vertex2, vertex3, players[q], obstacles[r]));
-				edges.push(createEdge(vertex3, vertex4, players[q], obstacles[r]));
-				edges.push(createEdge(vertex4, vertex1, players[q], obstacles[r]));
+					edges.push(createEdge(vertex1, vertex2, players[q], obstacles[r]));
+					edges.push(createEdge(vertex2, vertex3, players[q], obstacles[r]));
+					edges.push(createEdge(vertex3, vertex4, players[q], obstacles[r]));
+					edges.push(createEdge(vertex4, vertex1, players[q], obstacles[r]));
+				}else{
+					var vertex1 = createVertex(obstacles[r].xPos, obstacles[r].yPos);
+					vertices.push(vertex1);
+					var vertex2 = createVertex(obstacles[r].xPos + BLOCK_SIZE, obstacles[r].yPos);
+					vertices.push(vertex2);
+					var vertex3 = createVertex(obstacles[r].xPos+BLOCK_SIZE, obstacles[r].yPos+BLOCK_SIZE);
+					vertices.push(vertex3);
+					var vertex4 = createVertex(obstacles[r].xPos, obstacles[r].yPos+BLOCK_SIZE);
+					vertices.push(vertex4);		
+
+					edges.push(createEdge(vertex1, vertex2, players[q], obstacles[r]));
+					edges.push(createEdge(vertex2, vertex3, players[q], obstacles[r]));
+					edges.push(createEdge(vertex3, vertex4, players[q], obstacles[r]));
+					edges.push(createEdge(vertex4, vertex1, players[q], obstacles[r]));
+				}
 			}
 		}
 		
@@ -881,31 +899,29 @@ function packageAllGameData(q){
  				return a.distance-b.distance;
 		});
 		
-		for(var r = 0; r < edges.length; r++){
-			if(edges[r].parent_object = players[q]){
-				delete edges[r];
-			}
-		}
-		
 		for(var r = edges.length-1; r >= 0; r--){
 			if(typeof edges[r] !== "undefined"){
 				
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== "undefined"){
-						if(doIntersect(createVertex(players[q].xPos, players[q].yPos), createVertex(edges[r].midpoint.xPos, edges[r].midpoint.yPos), edges[s].vertex_a, edges[s].vertex_b)){
-							delete edges[s];
+						if(s != r){
+							if(doIntersect(createVertex(players[q].xPos, players[q].yPos), createVertex(edges[r].midpoint.xPos, edges[r].midpoint.yPos), edges[s].vertex_a, edges[s].vertex_b)){
+								delete edges[r];
+								s = edges.length;
+							}
 						}
 					}
 				}
 				
 			}
 		}
-		
+
 		edges.clean(undefined);
 		
 		
-		
-		//shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_a, edges[r].vertex_b));
+		for(var r = 0; r < edges.length; r++){
+			shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_a, edges[r].vertex_b));
+		}
 		
 				
 		player_knowledge.stage = stage;

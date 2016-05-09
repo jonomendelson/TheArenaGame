@@ -346,7 +346,7 @@
 					}
 				}
 				
-				for(var i = 0; i < data.shadows.length; i++){
+				/*for(var i = 0; i < data.shadows.length; i++){
 					ctx.fillStyle = "#000000";
 					ctx.beginPath();
 					
@@ -370,6 +370,16 @@
 					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos - cameraX, data.shadows[i].cast_vertex_b.yPos - cameraY);
 					ctx.fill();
 					
+				}*/
+				
+				for(var i = 0; i < data.shadows.length; i++){
+					ctx.fillStyle = "#000000";
+					ctx.beginPath();
+					
+					ctx.moveTo(data.shadows[i].cast_vertex_a.xPos - cameraX, data.shadows[i].cast_vertex_a.yPos - cameraY);
+					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos - cameraX, data.shadows[i].cast_vertex_b.yPos - cameraY);
+					
+					ctx.stroke();
 				}
 				
 				for(var i = 0; i < data.items.length; i++){
