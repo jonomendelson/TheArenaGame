@@ -814,7 +814,7 @@ function packageAllGameData(q){
 		var edges = [];
 		var shadows = [];
 				
-		for(var r = 0; r < players.length; r++){
+		for(var r = 0; r < players.length; r++){ //add to player knowledge any players in vision radius and add their edges (except don't add player's own edges)
 			if(distFrom(players[r].xPos, players[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_players.push(players[r]);
 				if(r !== q){
@@ -835,7 +835,7 @@ function packageAllGameData(q){
 			}
 		}
 				
-		for(var r = 0; r < items.length; r++){
+		for(var r = 0; r < items.length; r++){ //add to player knowledge any items in vision radius and add their edges
 			if(distFrom(items[r].xPos, items[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_items.push(items[r]);
 				var vertex1 = createVertex(items[r].xPos, items[r].yPos);
@@ -854,7 +854,7 @@ function packageAllGameData(q){
 			}
 		}
 				
-		for(var r = 0; r < obstacles.length; r++){
+		for(var r = 0; r < obstacles.length; r++){ //add to player knowledge any obstacles in vision radius and add their edges
 			if(distFrom(obstacles[r].xPos, obstacles[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_obstacles.push(obstacles[r]);
 				if(obstacles[r].type == "TREE"){
@@ -889,17 +889,17 @@ function packageAllGameData(q){
 			}
 		}
 		
-		for(var r = 0; r < creatures.length; r++){
+		for(var r = 0; r < creatures.length; r++){ //add to player knowledge any creatures in vision radius
 			if(distFrom(creatures[r].xPos, creatures[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_creatures.push(creatures[r]);
 			}
 		}
 				
-		edges.sort(function(a, b){
+		edges.sort(function(a, b){ //sort edges by distance
  				return a.distance-b.distance;
 		});
 		
-		for(var r = edges.length-1; r >= 0; r--){
+		for(var r = edges.length-1; r >= 0; r--){ //delete any edges that are hidden by other edges
 			if(typeof edges[r] !== "undefined"){
 				
 				for(var s = 0; s < edges.length; s++){
@@ -918,6 +918,53 @@ function packageAllGameData(q){
 
 		edges.clean(undefined);
 		
+		for(var r = 0; r < player_players.length; r++){ //cycle through players current player knows about and remove any that are hidden by an edge (also remove that player's edges)
+			for(var s = 0; s < edges.length; s++){
+				if(typeof edges[s] !== 'undefined' && typeof player_players[r] !== 'undefined'){
+					if(r != q){ //don't check this for current player
+						if(doIntersect(createVertex(players[q].xPos, players[q].yPos), createVertex(player_players[r].xPos, player_players[r].yPos), edges[s].vertex_a, edges[s].vertex_b)){
+							for(var t = 0; t < edges.length; t++){
+								if(edges[t].parent_object = player_players[r]){
+									delete edges[t];
+								}
+							}
+							delete player_players[r];		
+						}
+					}
+				}
+			}
+		}
+		
+		edges.clean(undefined);
+		player_players.clean(undefined);
+		
+		for(var r = 0; r < edges.length; r++){
+			for(var s = 0; s < edges.length; s++){
+				if(r != s){
+					if(typeof edges[r] !== 'undefined' && typeof edges[s] !== 'undefined'){
+						if(edges[r].vertex_a == edges[s].vertex_a){
+							shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_b, edges[s].vertex_b));
+							delete edges[r];
+							delete edges[s];
+						}else if(edges[r].vertex_b == edges[s].vertex_b){
+							shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_a, edges[s].vertex_a));
+							delete edges[r];
+							delete edges[s];
+						}else if(edges[r].vertex_a == edges[s].vertex_b){
+							shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_b, edges[s].vertex_a));
+							delete edges[r];
+							delete edges[s];
+						}else if(edges[r].vertex_b == edges[s].vertex_a){
+							shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_a, edges[s].vertex_b));
+							delete edges[r];
+							delete edges[s];
+						}
+					}
+				}
+			}
+		}
+		
+		edges.clean(undefined);
 		
 		for(var r = 0; r < edges.length; r++){
 			shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_a, edges[r].vertex_b));
