@@ -338,14 +338,6 @@
 					}
 				}
 				
-				for(var i = 0; i < data.obstacles.length; i++){
-					if(data.obstacles[i].type == "TREE"){
-						ctx.drawImage(tree, data.obstacles[i].xPos - cameraX - 20,data.obstacles[i].yPos- cameraY - 20);
-					}else{
-						ctx.drawImage(rock, data.obstacles[i].xPos - cameraX,data.obstacles[i].yPos- cameraY);
-					}
-				}
-				
 				/*for(var i = 0; i < data.shadows.length; i++){
 					ctx.fillStyle = "#000000";
 					ctx.beginPath();
@@ -372,6 +364,16 @@
 					
 				}*/
 				
+				for(var i = 0; i < data.obstacles.length; i++){
+					if(data.obstacles[i].type == "TREE"){
+						ctx.drawImage(tree, data.obstacles[i].xPos - cameraX - 20,data.obstacles[i].yPos- cameraY - 20);
+					}else{
+						ctx.drawImage(rock, data.obstacles[i].xPos - cameraX,data.obstacles[i].yPos- cameraY);
+					}
+				}
+				
+				
+
 				for(var i = 0; i < data.shadows.length; i++){
 					ctx.fillStyle = "#000000";
 					ctx.beginPath();

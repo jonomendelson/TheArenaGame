@@ -29,11 +29,10 @@ var BASE_PLAYER_DAMAGE = 3;
 var STAMINA_USAGE = 1.2;
 var BASE_STAMINA_REGEN = 0.5;
 
-var MAX_VISION_RADIUS = 400;
+var MAX_VISION_RADIUS = 600;
 
 //item name, damage multiplier (over basic attack), seconds before reuse, range
 var ITEM_STATS = [["", 1, 0.3, 90], ["dagger", 2, 0.4, 90], ["sword", 3, 0.7, 150], ["firstaid", 1, 0.8, 90], ["empty_bottle", 1, 0.8, 90], ["full_bottle", 1, 0.8, 90],  ["meat", 1, 0.8, 90]];
-var TOTAL_SPAWN_RATE = 7.6;
 
 var WOLF_MOVE_SPEED = 3.5;
 var PIG_MOVE_SPEED = 2;
@@ -442,7 +441,7 @@ function solvePhysics(){
 				}
 			}
 
-			console.log("Players: " + players.length + " and Stage: " + stage);
+		//	console.log("Players: " + players.length + " and Stage: " + stage);
 			
 			if(players[i].isEDown){ //fix
 				var item = {};
@@ -694,9 +693,14 @@ function generateMap(mapRadius){
 		}
 	}
 	for(var i = 0; i < ITEM_COUNT; i++){
-		var randomNum = Math.floor(Math.random()*ITEM_STATS.length);
-		
+		var randomNum = 0;
+		console.log("Item started as: " + ITEM_STATS[randomNum][0]);
+		while(ITEM_STATS[randomNum][0] == ""){
+			randomNum = Math.floor(Math.random()*ITEM_STATS.length);
+			console.log("Item changed to: " + ITEM_STATS[randomNum][0]);
+		}
 		addNewItem(ITEM_STATS[randomNum][0], mapRadius);
+		console.log("Added item: " + ITEM_STATS[randomNum][0]);
 	}
 	
 	for(var i = 0; i < CREATURE_COUNT/2; i++){
@@ -723,7 +727,10 @@ function generateMap(mapRadius){
 	}
 	
 	for(var i = 0; i < 15; i++){
-		var randomNum = Math.floor(Math.random()*ITEM_STATS.length);
+		var randomNum = 0;
+		while(ITEM_STATS[randomNum][0] == ""){
+			randomNum = Math.floor(Math.random()*ITEM_STATS.length);
+		}
 		addNewItemAt(ITEM_STATS[randomNum][0], -125+MAP_CENTER_X+Math.round((Math.random()*250*2)/BLOCK_SIZE)*BLOCK_SIZE, -125+MAP_CENTER_Y+Math.round((Math.random()*250*2)/BLOCK_SIZE)*BLOCK_SIZE, mapRadius);
 	}
 	
@@ -822,9 +829,9 @@ function packageAllGameData(q){
 					vertices.push(vertex1);
 					var vertex2 = createVertex(players[r].xPos + BLOCK_SIZE, players[r].yPos);
 					vertices.push(vertex2);
-					var vertex3 = createVertex(players[r].xPos+BLOCK_SIZE, players[r].yPos+BLOCK_SIZE);
+					var vertex3 = createVertex(players[r].xPos + BLOCK_SIZE, players[r].yPos + BLOCK_SIZE);
 					vertices.push(vertex3);
-					var vertex4 = createVertex(players[r].xPos, players[r].yPos+BLOCK_SIZE);
+					var vertex4 = createVertex(players[r].xPos, players[r].yPos + BLOCK_SIZE);
 					vertices.push(vertex4);		
 
 					edges.push(createEdge(vertex1, vertex2, players[q], players[r]));
@@ -835,22 +842,22 @@ function packageAllGameData(q){
 			}
 		}
 				
-		for(var r = 0; r < items.length; r++){ //add to player knowledge any items in vision radius and add their edges
-			if(distFrom(items[r].xPos, items[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
-				player_items.push(items[r]);
-				var vertex1 = createVertex(items[r].xPos, items[r].yPos);
+		for(var r = 0; r < creatures.length; r++){ //add to player knowledge any creatures in vision radius and add their edges
+			if(distFrom(creatures[r].xPos, creatures[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+				player_creatures.push(creatures[r]);
+				var vertex1 = createVertex(creatures[r].xPos, creatures[r].yPos);
 				vertices.push(vertex1);
-				var vertex2 = createVertex(items[r].xPos + BLOCK_SIZE, items[r].yPos);
+				var vertex2 = createVertex(creatures[r].xPos + BLOCK_SIZE, creatures[r].yPos);
 				vertices.push(vertex2);
-				var vertex3 = createVertex(items[r].xPos+BLOCK_SIZE, items[r].yPos+BLOCK_SIZE);
+				var vertex3 = createVertex(creatures[r].xPos+BLOCK_SIZE, creatures[r].yPos + BLOCK_SIZE);
 				vertices.push(vertex3);
-				var vertex4 = createVertex(items[r].xPos, items[r].yPos+BLOCK_SIZE);
+				var vertex4 = createVertex(creatures[r].xPos, creatures[r].yPos + BLOCK_SIZE);
 				vertices.push(vertex4);		
 
-				edges.push(createEdge(vertex1, vertex2, players[q], items[r]));
-				edges.push(createEdge(vertex2, vertex3, players[q], items[r]));
-				edges.push(createEdge(vertex3, vertex4, players[q], items[r]));
-				edges.push(createEdge(vertex4, vertex1, players[q], items[r]));
+				edges.push(createEdge(vertex1, vertex2, players[q], creatures[r]));
+				edges.push(createEdge(vertex2, vertex3, players[q], creatures[r]));
+				edges.push(createEdge(vertex3, vertex4, players[q], creatures[r]));
+				edges.push(createEdge(vertex4, vertex1, players[q], creatures[r]));
 			}
 		}
 				
@@ -889,9 +896,9 @@ function packageAllGameData(q){
 			}
 		}
 		
-		for(var r = 0; r < creatures.length; r++){ //add to player knowledge any creatures in vision radius
-			if(distFrom(creatures[r].xPos, creatures[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
-				player_creatures.push(creatures[r]);
+		for(var r = 0; r < items.length; r++){ //add to player knowledge any items in vision radius
+			if(distFrom(items[r].xPos, items[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+				player_items.push(items[r]);
 			}
 		}
 				
@@ -899,13 +906,59 @@ function packageAllGameData(q){
  				return a.distance-b.distance;
 		});
 		
+		for(var r = 0; r < player_players.length; r++){ //delete any edges that are too close to current player (that originate from other players)
+			if(typeof player_players[r] !== "undefined"){
+				
+				for(var s = 0; s < player_players.length; s++){
+					if(typeof player_players[s] !== "undefined"){
+						if(s !== r){
+							if(distFrom(player_players[r].xPos, player_players[r].yPos, player_players[s].xPos, player_players[s].yPos) < BLOCK_SIZE*1.5){
+								for(var t = 0; t < edges.length; t++){
+									if(typeof edges[t] !== 'undefined'){
+										if(edges[t].parent_object == player_players[r]){
+											delete edges[t];
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+			}
+		}
+		edges.clean(undefined);
+		
+		for(var r = 0; r < player_creatures.length; r++){ //delete any edges that are too close to current player
+			if(typeof player_creatures[r] !== "undefined"){
+				
+				for(var s = 0; s < player_players.length; s++){
+					if(typeof player_players[s] !== "undefined"){
+
+							if(distFrom(player_creatures[r].xPos, player_creatures[r].yPos, player_players[s].xPos, player_players[s].yPos) < BLOCK_SIZE*1.5){
+								for(var t = 0; t < edges.length; t++){
+									if(typeof edges[t] !== 'undefined'){
+										if(edges[t].parent_object == player_creatures[r]){
+											delete edges[t];
+										}
+									}
+								}
+							}
+						
+					}
+				}
+				
+			}
+		}
+		edges.clean(undefined);
+		
 		for(var r = edges.length-1; r >= 0; r--){ //delete any edges that are hidden by other edges
 			if(typeof edges[r] !== "undefined"){
 				
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== "undefined"){
 						if(s != r){
-							if(doIntersect(createVertex(players[q].xPos, players[q].yPos), createVertex(edges[r].midpoint.xPos, edges[r].midpoint.yPos), edges[s].vertex_a, edges[s].vertex_b)){
+							if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(edges[r].midpoint.xPos, edges[r].midpoint.yPos), edges[s].vertex_a, edges[s].vertex_b)){
 								delete edges[r];
 								s = edges.length;
 							}
@@ -921,14 +974,18 @@ function packageAllGameData(q){
 		for(var r = 0; r < player_players.length; r++){ //cycle through players current player knows about and remove any that are hidden by an edge (also remove that player's edges)
 			for(var s = 0; s < edges.length; s++){
 				if(typeof edges[s] !== 'undefined' && typeof player_players[r] !== 'undefined'){
-					if(r != q){ //don't check this for current player
-						if(doIntersect(createVertex(players[q].xPos, players[q].yPos), createVertex(player_players[r].xPos, player_players[r].yPos), edges[s].vertex_a, edges[s].vertex_b)){
-							for(var t = 0; t < edges.length; t++){
-								if(edges[t].parent_object = player_players[r]){
-									delete edges[t];
+					if(player_players[r] != players[q]){ //dont check for current player
+						if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_players[r].xPos+BLOCK_SIZE/2, player_players[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){
+							if(edges[s].parent_object != player_players[r]){
+								for(var t = 0; t < edges.length; t++){
+								if(typeof edges[t] !== 'undefined'){
+									if(edges[t].parent_object == player_players[r]){
+										delete edges[t];
+									}
 								}
-							}
-							delete player_players[r];		
+								delete player_players[r];
+								}
+							}		
 						}
 					}
 				}
@@ -938,7 +995,52 @@ function packageAllGameData(q){
 		edges.clean(undefined);
 		player_players.clean(undefined);
 		
-		for(var r = 0; r < edges.length; r++){
+		for(var r = 0; r < player_items.length; r++){ //cycle through items current player knows about and remove any that are hidden by an edge (also remove that player's edges)
+			for(var s = 0; s < edges.length; s++){
+				if(typeof edges[s] !== 'undefined' && typeof player_items[r] !== 'undefined'){
+						if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_items[r].xPos+BLOCK_SIZE/2, player_items[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){
+							if(edges[s].parent_object != player_items[r]){
+								for(var t = 0; t < edges.length; t++){
+								if(typeof edges[t] !== 'undefined'){
+									if(edges[t].parent_object == player_items[r]){
+										delete edges[t];
+									}
+								}
+								delete player_items[r];
+								}
+							}		
+						}
+				}
+			}
+		}
+		
+		edges.clean(undefined);
+		player_items.clean(undefined);
+		
+		for(var r = 0; r < player_creatures.length; r++){ //cycle through creatures current player knows about and remove any that are hidden by an edge (also remove that player's edges)
+			for(var s = 0; s < edges.length; s++){
+				if(typeof edges[s] !== 'undefined' && typeof player_creatures[r] !== 'undefined'){
+						if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_creatures[r].xPos+BLOCK_SIZE/2, player_creatures[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){
+							if(edges[s].parent_object != player_creatures[r]){
+								for(var t = 0; t < edges.length; t++){
+								if(typeof edges[t] !== 'undefined'){
+									if(edges[t].parent_object == player_creatures[r]){
+										delete edges[t];
+									}
+								}
+								delete player_creatures[r];
+								}
+							}		
+						}
+				}
+			}
+		}
+		
+		edges.clean(undefined);
+		player_creatures.clean(undefined);
+	
+		
+		/*for(var r = 0; r < edges.length; r++){ //combine touching edges
 			for(var s = 0; s < edges.length; s++){
 				if(r != s){
 					if(typeof edges[r] !== 'undefined' && typeof edges[s] !== 'undefined'){
@@ -964,7 +1066,7 @@ function packageAllGameData(q){
 			}
 		}
 		
-		edges.clean(undefined);
+		edges.clean(undefined);*/
 		
 		for(var r = 0; r < edges.length; r++){
 			shadows.push(createShadow(createVertex(players[q].xPos, players[q].yPos), edges[r].vertex_a, edges[r].vertex_b));
@@ -982,6 +1084,7 @@ function packageAllGameData(q){
 		player_knowledge.creatures = player_creatures;
 		player_knowledge.draw_length = MAX_VISION_RADIUS;
 		player_knowledge.shadows = shadows;
+		player_knowledge.edges = edges;
 		
 		return player_knowledge;
 	
