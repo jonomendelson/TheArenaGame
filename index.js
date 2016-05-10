@@ -1113,7 +1113,6 @@ function packageAllGameData(q){
 		player_knowledge.creatures = player_creatures;
 		player_knowledge.draw_length = MAX_VISION_RADIUS;
 		player_knowledge.shadows = shadows;
-		player_knowledge.edges = edges;
 		
 		return player_knowledge;
 	

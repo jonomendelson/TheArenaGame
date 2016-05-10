@@ -338,7 +338,7 @@
 					}
 				}
 				
-				/*for(var i = 0; i < data.shadows.length; i++){
+				for(var i = 0; i < data.shadows.length; i++){
 					ctx.fillStyle = "#000000";
 					ctx.beginPath();
 					
@@ -350,7 +350,7 @@
 					var ray_one_unitY = ray_one_deltaY/ray_one_distance;
 					
 					var ray_two_deltaX = data.shadows[i].cast_vertex_b.xPos - data.shadows[i].origin_vertex.xPos;
-					var ray_two_deltaY = data.shadows[i].cast_vertex_b.xPos - data.shadows[i].origin_vertex.xPos;	
+					var ray_two_deltaY = data.shadows[i].cast_vertex_b.yPos - data.shadows[i].origin_vertex.yPos;	
 
 					var ray_two_distance = Math.sqrt(ray_two_deltaX*ray_two_deltaX + ray_two_deltaY*ray_two_deltaY);
 					var ray_two_unitX = ray_two_deltaX/ray_two_distance;
@@ -360,9 +360,10 @@
 					ctx.lineTo(data.shadows[i].cast_vertex_a.xPos + ray_one_unitX * data.draw_length - cameraX, data.shadows[i].cast_vertex_a.yPos + ray_one_unitY * data.draw_length - cameraY);
 					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos + ray_two_unitX * data.draw_length - cameraX, data.shadows[i].cast_vertex_b.yPos + ray_two_unitY * data.draw_length - cameraY);
 					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos - cameraX, data.shadows[i].cast_vertex_b.yPos - cameraY);
+					ctx.closePath();
 					ctx.fill();
 					
-				}*/
+				}
 				
 				for(var i = 0; i < data.obstacles.length; i++){
 					if(data.obstacles[i].type == "TREE"){
@@ -374,7 +375,7 @@
 				
 				
 
-				for(var i = 0; i < data.shadows.length; i++){
+				/*for(var i = 0; i < data.shadows.length; i++){
 					ctx.fillStyle = "#000000";
 					ctx.beginPath();
 					
@@ -382,7 +383,7 @@
 					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos - cameraX, data.shadows[i].cast_vertex_b.yPos - cameraY);
 					
 					ctx.stroke();
-				}
+				}*/
 				
 				for(var i = 0; i < data.items.length; i++){
 					if(data.items[i].type == "dagger"){
