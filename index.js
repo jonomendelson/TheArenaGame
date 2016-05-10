@@ -971,21 +971,22 @@ function packageAllGameData(q){
 
 		edges.clean(undefined);
 		
-		for(var r = 0; r < player_players.length; r++){ //cycle through players current player knows about and remove any that are hidden by an edge (also remove that player's edges)
-			for(var s = 0; s < edges.length; s++){
-				if(typeof edges[s] !== 'undefined' && typeof player_players[r] !== 'undefined'){
-					if(player_players[r] != players[q]){ //dont check for current player
-						if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_players[r].xPos+BLOCK_SIZE/2, player_players[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){
-							if(edges[s].parent_object != player_players[r]){
+		for(var r = 0; r < player_players.length; r++){ //remove any other players that are hidden by an edge (and remove their edges) - note: other players can't be removed by their own edges 
+			if(player_players[r] != players[q]){ //dont run anything that could remove current player
+				for(var s = 0; s < edges.length; s++){
+					if(typeof edges[s] !== 'undefined' && typeof player_players[r] !== 'undefined'){
+						if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_players[r].xPos+BLOCK_SIZE/2, player_players[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){ //if other player is hidden by edges[s]
+							if(edges[s].parent_object != player_players[r]){ //make sure the edge that is blocking the other player isn't the other player's own edge
 								for(var t = 0; t < edges.length; t++){
-								if(typeof edges[t] !== 'undefined'){
-									if(edges[t].parent_object == player_players[r]){
-										delete edges[t];
+									if(typeof edges[t] !== 'undefined'){
+										if(edges[t].parent_object == player_players[r]){ //remove all edges that the hidden other player owns
+											delete edges[t];
+										}
 									}
 								}
 								delete player_players[r];
-								}
-							}		
+										
+							}
 						}
 					}
 				}
@@ -995,49 +996,77 @@ function packageAllGameData(q){
 		edges.clean(undefined);
 		player_players.clean(undefined);
 		
-		for(var r = 0; r < player_items.length; r++){ //cycle through items current player knows about and remove any that are hidden by an edge (also remove that player's edges)
-			for(var s = 0; s < edges.length; s++){
-				if(typeof edges[s] !== 'undefined' && typeof player_items[r] !== 'undefined'){
-						if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_items[r].xPos+BLOCK_SIZE/2, player_items[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){
-							if(edges[s].parent_object != player_items[r]){
+		for(var r = 0; r < player_creatures.length; r++){ //remove any creatures that are hidden by an edge (and remove their edges) - note: other creatures can't be removed by their own edges 
+				for(var s = 0; s < edges.length; s++){
+					if(typeof edges[s] !== 'undefined' && typeof player_creatures[r] !== 'undefined'){
+						if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_creatures[r].xPos+BLOCK_SIZE/2, player_creatures[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){ //if creature is hidden by edges[s]
+							if(edges[s].parent_object != player_creatures[r]){ //make sure the edge that is blocking the creature isn't the creature's own edge
 								for(var t = 0; t < edges.length; t++){
-								if(typeof edges[t] !== 'undefined'){
-									if(edges[t].parent_object == player_items[r]){
-										delete edges[t];
-									}
-								}
-								delete player_items[r];
-								}
-							}		
-						}
-				}
-			}
-		}
-		
-		edges.clean(undefined);
-		player_items.clean(undefined);
-		
-		for(var r = 0; r < player_creatures.length; r++){ //cycle through creatures current player knows about and remove any that are hidden by an edge (also remove that player's edges)
-			for(var s = 0; s < edges.length; s++){
-				if(typeof edges[s] !== 'undefined' && typeof player_creatures[r] !== 'undefined'){
-						if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_creatures[r].xPos+BLOCK_SIZE/2, player_creatures[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){
-							if(edges[s].parent_object != player_creatures[r]){
-								for(var t = 0; t < edges.length; t++){
-								if(typeof edges[t] !== 'undefined'){
-									if(edges[t].parent_object == player_creatures[r]){
-										delete edges[t];
+									if(typeof edges[t] !== 'undefined'){
+										if(edges[t].parent_object == player_creatures[r]){ //remove all edges that the hidden creature owns
+											delete edges[t];
+										}
 									}
 								}
 								delete player_creatures[r];
-								}
-							}		
+										
+							}
 						}
+					}
 				}
-			}
 		}
 		
 		edges.clean(undefined);
 		player_creatures.clean(undefined);
+		
+		for(var r = 0; r < player_obstacles.length; r++){ //remove any obstacles that are hidden by an edge (and remove their edges) - note: obstacles can't be removed by their own edges 
+				for(var s = 0; s < edges.length; s++){
+					if(typeof edges[s] !== 'undefined' && typeof player_obstacles[r] !== 'undefined'){
+						if(player_obstacles[r].type == "TREE"){ //important for doIntersect: need to adjust point for segment (center is in a different place if obstacle is a tree)
+							if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_obstacles[r].xPos+BLOCK_SIZE, player_obstacles[r].yPos+BLOCK_SIZE), edges[s].vertex_a, edges[s].vertex_b)){ //if obstacle is hidden by edges[s]
+								if(edges[s].parent_object != player_obstacles[r]){ //make sure the edge that is blocking the obstacle isn't the obstacle's own edge
+									for(var t = 0; t < edges.length; t++){
+										if(typeof edges[t] !== 'undefined'){
+											if(edges[t].parent_object == player_obstacles[r]){ //remove all edges that the hidden obstacle owns
+												delete edges[t];
+											}
+										}
+									}
+									delete player_obstacles[r];		
+								}
+							}
+						}else{ //obstacle is normal size
+							if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_obstacles[r].xPos+BLOCK_SIZE/2, player_obstacles[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){ //if obstacle is hidden by edges[s]
+								if(edges[s].parent_object != player_obstacles[r]){ //make sure the edge that is blocking the obstacle isn't the obstacle's own edge
+									for(var t = 0; t < edges.length; t++){
+										if(typeof edges[t] !== 'undefined'){
+											if(edges[t].parent_object == player_obstacles[r]){ //remove all edges that the hidden obstacle owns
+												delete edges[t];
+											}
+										}
+									}
+									delete player_obstacles[r];		
+								}
+							}
+						}
+					}
+				}
+		}
+		
+		edges.clean(undefined);
+		player_obstacles.clean(undefined);
+		
+		for(var r = 0; r < player_items.length; r++){ //remove any items that are hidden by an edge - note: items don't have edges, so we treat this case differently
+			for(var s = 0; s < edges.length; s++){
+				if(typeof edges[s] !== 'undefined' && typeof player_items[r] !== 'undefined'){
+					if(doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(player_items[r].xPos+BLOCK_SIZE/2, player_items[r].yPos+BLOCK_SIZE/2), edges[s].vertex_a, edges[s].vertex_b)){ //if item is hidden by edges[s]
+						delete player_items[r];
+					}
+				}
+			}
+		}
+		
+		player_items.clean(undefined);
 	
 		
 		/*for(var r = 0; r < edges.length; r++){ //combine touching edges
