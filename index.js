@@ -6,8 +6,8 @@ var FRAME_RATE = 60.0;
 var PORT_NUMBER = 3000;
 var STATS_COUNTDOWN_LENGTH = 30;
 
-var MAP_CENTER_X = 2000;
-var MAP_CENTER_Y = 2000;
+var MAP_CENTER_X = 5000;
+var MAP_CENTER_Y = 5000;
 var MAP_SIZE_DECAY = 0.9998;
 
 var HUNGER_LOSS = 0.015;
@@ -40,7 +40,7 @@ var PIG_MOVE_SPEED = 2;
 var WOLF_DAMAGE = 0.25;
 
 var CENTER_SIZE = 500;
-var START_MAP_RADIUS = 2000;
+var START_MAP_RADIUS = 5000;
 
 var PLAYER_FRICTION = 0.95;
 var WALL_BOUNCE = 10;
@@ -1027,7 +1027,7 @@ function packageAllGameData(q){
 		edges.clean(undefined);
 		player_creatures.clean(undefined);
 		
-		for(var r = 0; r < player_obstacles.length; r++){ //remove any obstacles that are hidden by an edge (and remove their edges) - note: obstacles can't be removed by their own edges 
+		/*for(var r = 0; r < player_obstacles.length; r++){ //remove any obstacles that are hidden by an edge (and remove their edges) - note: obstacles can't be removed by their own edges 
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== 'undefined' && typeof player_obstacles[r] !== 'undefined'){
 						if(player_obstacles[r].type == "TREE"){ //important for doIntersect: need to adjust point for segment (center is in a different place if obstacle is a tree)
@@ -1062,7 +1062,7 @@ function packageAllGameData(q){
 		}
 		
 		edges.clean(undefined);
-		player_obstacles.clean(undefined);
+		player_obstacles.clean(undefined);*/
 		
 		for(var r = 0; r < player_items.length; r++){ //remove any items that are hidden by an edge - note: items don't have edges, so we treat this case differently
 			for(var s = 0; s < edges.length; s++){
