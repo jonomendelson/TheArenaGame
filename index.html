@@ -338,8 +338,11 @@
 					}
 				}
 				
+				ctx.fillStyle = "#000000";
+				ctx.globalAlpha = 0.5;
+
 				for(var i = 0; i < data.shadows.length; i++){
-					ctx.fillStyle = "#000000";
+
 					ctx.beginPath();
 					
 					var ray_one_deltaX = data.shadows[i].cast_vertex_a.xPos - data.shadows[i].origin_vertex.xPos;
@@ -357,13 +360,14 @@
 					var ray_two_unitY = ray_two_deltaY/ray_two_distance;
 					
 					ctx.moveTo(data.shadows[i].cast_vertex_a.xPos - cameraX, data.shadows[i].cast_vertex_a.yPos - cameraY);
-					ctx.lineTo(data.shadows[i].cast_vertex_a.xPos + ray_one_unitX * data.draw_length - cameraX, data.shadows[i].cast_vertex_a.yPos + ray_one_unitY * data.draw_length - cameraY);
-					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos + ray_two_unitX * data.draw_length - cameraX, data.shadows[i].cast_vertex_b.yPos + ray_two_unitY * data.draw_length - cameraY);
+					ctx.lineTo(data.shadows[i].cast_vertex_a.xPos + ray_one_unitX * data.draw_length*3 - cameraX, data.shadows[i].cast_vertex_a.yPos + ray_one_unitY * data.draw_length*3 - cameraY);
+					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos + ray_two_unitX * data.draw_length*3 - cameraX, data.shadows[i].cast_vertex_b.yPos + ray_two_unitY * data.draw_length*3 - cameraY);
 					ctx.lineTo(data.shadows[i].cast_vertex_b.xPos - cameraX, data.shadows[i].cast_vertex_b.yPos - cameraY);
 					ctx.closePath();
 					ctx.fill();
-					
 				}
+				
+				ctx.globalAlpha = 1;
 				
 				for(var i = 0; i < data.obstacles.length; i++){
 					if(data.obstacles[i].type == "TREE"){
