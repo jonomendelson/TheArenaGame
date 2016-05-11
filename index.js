@@ -808,11 +808,11 @@ function doIntersect(p1, q1, p2, q2){
     return false; // Doesn't fall in any of the above cases
 }
 
-function isHiddenByShadow(currEdge, currObject, objectSize, q){
-	var doesUpperLeft = doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(currObject.xPos, currObject.yPos), currEdge.vertex_a, currEdge.vertex_b);
-	var doesUpperRight = doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(currObject.xPos + objectSize, currObject.yPos), currEdge.vertex_a, currEdge.vertex_b);
-	var doesLowerLeft = doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(currObject.xPos, currObject.yPos + objectSize), currEdge.vertex_a, currEdge.vertex_b);
-	var doesLowerRight = doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(currObject.xPos + objectSize, currObject.yPos + objectSize), currEdge.vertex_a, currEdge.vertex_b);
+function isHiddenByShadow(currEdge, currObject, objectSize, q, offset){
+	var doesUpperLeft = doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(currObject.xPos + offset, currObject.yPos + offset), currEdge.vertex_a, currEdge.vertex_b);
+	var doesUpperRight = doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(currObject.xPos + objectSize + offset, currObject.yPos + offset), currEdge.vertex_a, currEdge.vertex_b);
+	var doesLowerLeft = doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(currObject.xPos + offset, currObject.yPos + objectSize + offset), currEdge.vertex_a, currEdge.vertex_b);
+	var doesLowerRight = doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(currObject.xPos + objectSize + offset, currObject.yPos + objectSize + offset), currEdge.vertex_a, currEdge.vertex_b);
 	return doesUpperLeft || doesUpperRight || doesLowerLeft || doesLowerRight;
 }
  
@@ -983,7 +983,7 @@ function packageAllGameData(q){
 			if(player_players[r] != players[q]){ //dont run anything that could remove current player
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== 'undefined' && typeof player_players[r] !== 'undefined'){
-						if(isHiddenByShadow(edges[s], player_players[r], BLOCK_SIZE, q)){
+						if(isHiddenByShadow(edges[s], player_players[r], BLOCK_SIZE, q, 0)){
 							if(edges[s].parent_object != player_players[r]){ //make sure the edge that is blocking the other player isn't the other player's own edge
 								for(var t = 0; t < edges.length; t++){
 									if(typeof edges[t] !== 'undefined'){
@@ -1007,7 +1007,7 @@ function packageAllGameData(q){
 		for(var r = 0; r < player_creatures.length; r++){ //remove any creatures that are hidden by an edge (and remove their edges) - note: other creatures can't be removed by their own edges 
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== 'undefined' && typeof player_creatures[r] !== 'undefined'){
-						if(isHiddenByShadow(edges[s], player_creatures[r], BLOCK_SIZE, q)){
+						if(isHiddenByShadow(edges[s], player_creatures[r], BLOCK_SIZE, q, 0)){
 							if(edges[s].parent_object != player_creatures[r]){ //make sure the edge that is blocking the creature isn't the creature's own edge
 								for(var t = 0; t < edges.length; t++){
 									if(typeof edges[t] !== 'undefined'){
@@ -1031,7 +1031,7 @@ function packageAllGameData(q){
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== 'undefined' && typeof player_obstacles[r] !== 'undefined'){
 						if(player_obstacles[r].type == "TREE"){ //important for doIntersect: need to adjust point for segment (center is in a different place if obstacle is a tree)
-							if(isHiddenByShadow(edges[s], player_obstacles[r], BLOCK_SIZE*2, q)){
+							if(isHiddenByShadow(edges[s], player_obstacles[r], BLOCK_SIZE*2, q, -BLOCK_SIZE/2)){
 								if(edges[s].parent_object != player_obstacles[r]){ //make sure the edge that is blocking the obstacle isn't the obstacle's own edge
 									for(var t = 0; t < edges.length; t++){
 										if(typeof edges[t] !== 'undefined'){
@@ -1044,7 +1044,7 @@ function packageAllGameData(q){
 								}
 							}
 						}else{ //obstacle is normal size
-							if(isHiddenByShadow(edges[s], player_obstacles[r], BLOCK_SIZE, q)){
+							if(isHiddenByShadow(edges[s], player_obstacles[r], BLOCK_SIZE, q, 0)){
 								if(edges[s].parent_object != player_obstacles[r]){ //make sure the edge that is blocking the obstacle isn't the obstacle's own edge
 									for(var t = 0; t < edges.length; t++){
 										if(typeof edges[t] !== 'undefined'){
@@ -1067,7 +1067,7 @@ function packageAllGameData(q){
 		for(var r = 0; r < player_items.length; r++){ //remove any items that are hidden by an edge - note: items don't have edges, so we treat this case differently
 			for(var s = 0; s < edges.length; s++){
 				if(typeof edges[s] !== 'undefined' && typeof player_items[r] !== 'undefined'){
-					if(isHiddenByShadow(edges[s], player_items[r], BLOCK_SIZE, q)){
+					if(isHiddenByShadow(edges[s], player_items[r], BLOCK_SIZE, q, 0)){
 						delete player_items[r];
 					}
 				}
