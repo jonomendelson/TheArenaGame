@@ -1040,7 +1040,7 @@ function packageAllGameData(q){
 											}
 										}
 									}
-									delete player_obstacles[r];		
+									//delete player_obstacles[r];		
 								}
 							}
 						}else{ //obstacle is normal size
@@ -1053,7 +1053,7 @@ function packageAllGameData(q){
 											}
 										}
 									}
-									delete player_obstacles[r];		
+									//delete player_obstacles[r];		
 								}
 							}
 						}
