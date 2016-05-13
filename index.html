@@ -264,7 +264,7 @@
 			ctx.fillStyle = "#000000";
 			ctx.fillRect(0, 0, c.width, c.height);
 		}
-		
+
 		socket.on('your_socket_id', function(socket_id){
 			my_socket_id = socket_id;
 		});
@@ -505,8 +505,10 @@
 				}
 				
 				for(var i = 0; i < data.players.length; i++){
-					ctx.drawImage(player_image, data.players[i].xPos - cameraX, data.players[i].yPos - cameraY);
-					
+						var angle = Math.atan2(mouse_X- (data.players[i].xPos - cameraX), - (mouse_Y- (data.players[i].yPos - cameraY)));   
+				        ctx.rotate(angle); 
+				        ctx.drawImage(player_image, data.players[i].xPos - cameraX, data.players[i].yPos - cameraY);
+
 					ctx.fillStyle = "#000000";
 					ctx.fillRect(data.players[i].xPos - cameraX - 31, data.players[i].yPos - cameraY - 11, 102, 7);
 					
