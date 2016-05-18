@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node .",
-    "endless": "while true; do node . 2>&1 | tee `date +%Y-%m-%d`.txt; done"
+    "start": "while true; do node . 2>&1 | tee `date +%Y-%m-%d`.log; done"
   },
   "repository": {
     "type": "git",
