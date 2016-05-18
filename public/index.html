@@ -27,7 +27,7 @@
 		</style>
 	</head>
 	<body style="margin-left:0px; margin-right:0px; margin-top:0px; margin-bottom:0px; font-family:'my_font';">
-		<nav class="navbar navbar-inverse navbar-fixed-top" id="stats-header">
+		<nav class="navbar navbar-inverse navbar-fixed-top">
 			<div class="container-fluid">
 				<!-- Brand and toggle get grouped for better mobile display -->
 				<div class="navbar-header">
@@ -45,17 +45,19 @@
 					<ul class="nav navbar-nav">
 						<li><a href="#statsDiv">Input stats<span class="sr-only">(current)</span></a></li>
 						<li><a href="#usernameContainer">Play!</a></li>
+						<li><a href="#" data-toggle="modal" data-target="#controls">How to Play?</a></li>
+
 					</ul>
 				</div><!-- /.navbar-collapse -->
 			</div><!-- /.container-fluid -->
 		</nav>
 		<br><br>
-		<div class="jumbotron" id="home-container">
-		  	<div class="container">
-		    	<h1><b>THE ARENA</b><br></h1>
-				<div style="font-size:20px;">A multiplayer game - requires 2 or more players.</div></p>
-				<p><a class="btn btn-primary btn-lg" href="#statsDiv" role="button">Prepare your stats and play!</a></p>
-		  	</div>
+		<div class="jumbotron">
+			<div class="container">
+					<h1><b>THE ARENA</b><br></h1>
+			<div style="font-size:20px;">A multiplayer game - requires 2 or more players.</div></p>
+			<p><a class="btn btn-primary btn-lg" href="#statsDiv" role="button">Prepare your stats and play!</a></p>
+			</div>
 		</div>
 		<br><br><br><br>
 		<div id="spectatorDiv">
@@ -105,6 +107,26 @@
 			<br>
 			<button id="submitButton" onclick="updateLobbyClient('', ''); submitStatData();" style="font-size:80px; border-radius:8px; background-color:#333333; color:#FFFFFF; font-family:'my_font';">Submit</button>
 			</center>
+		</div>
+		<!-- Modal -->
+		<div class="modal fade" id="controls" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">Controls</h4>
+					</div>
+					<div class="modal-body">
+						<b>WASD</b> to move <br>
+						Hold <b>shift</b> to sprint in any direction <br>
+						Press <b>space</b> to pick up items <br>
+						Press <b>e</b> to drop items <br>
+						Press <b>12345</b> to switch between item slots <i>(you can't pick up multiple items in one slot)</i> <br>
+						Press <b>enter</b> to consume any items <i>(health packs, meat, water)</i> <br>
+						<b>Click</b> in a direction to attack
+					</div>
+				</div>
+			</div>
 		</div>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/frontend.js"></script>
