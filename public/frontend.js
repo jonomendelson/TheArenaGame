@@ -438,8 +438,6 @@ socket.on('all_game_data', function(data){
 		}
 
 		for(var i = 0; i < data.players.length; i++){
-				var angle = Math.atan2(mouse_X- (data.players[i].xPos - cameraX), - (mouse_Y- (data.players[i].yPos - cameraY)));
-				ctx.rotate(angle);
 				ctx.drawImage(player_image, data.players[i].xPos - cameraX, data.players[i].yPos - cameraY);
 
 			ctx.fillStyle = "#000000";
