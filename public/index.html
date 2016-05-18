@@ -1,0 +1,109 @@
+
+<html>
+	<head>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+		<style>
+			#brawn_amount{
+				background-color:#830300;
+			}
+			#intelligence_amount{
+				background-color:#003366;
+			}
+			#agility_amount{
+				background-color:#0D540D;
+			}
+
+		</style>
+	</head>
+	<body style="margin-left:0px; margin-right:0px; margin-top:0px; margin-bottom:0px; font-family:'my_font';">
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">The Arena</a>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li><a href="#statsDiv">Input stats<span class="sr-only">(current)</span></a></li>
+						<li><a href="#usernameContainer">Play!</a></li>
+					</ul>
+				</div><!-- /.navbar-collapse -->
+			</div><!-- /.container-fluid -->
+		</nav>
+		<br><br>
+		<div class="jumbotron">
+		  	<div class="container">
+		    	<h1><b>THE ARENA</b><br></h1>
+				<div style="font-size:20px;">A multiplayer game - requires 2 or more players.</div></p>
+				<p><a class="btn btn-primary btn-lg" href="#statsDiv" role="button">Prepare your stats and play!</a></p>
+		  	</div>
+		</div>
+		<br><br><br><br>
+		<div id="spectatorDiv">
+
+				<span style="font-size:80px;"><center><b>DON'T GO ANYWHERE!</b></center></span>
+				<span style="font-size:50px;"><center><div id="spectatorCountdownDiv">Next game starting in at most <b>200</b> seconds.</div></center></span>
+				<span style="font-size:30px;"><i><center>most games end in much less time than the number above</center></i></span>
+
+		</div>
+		<div id="gameDiv">
+			<canvas id="myCanvas" width="800" height="800"></canvas>
+			<script>
+				document.getElementById("myCanvas").width=window.innerWidth;
+				document.getElementById("myCanvas").height=window.innerHeight;
+			</script>
+		</div>
+		<div id="statsDiv">
+			<br><br>
+			<center style="font-size:60px;">
+			<div id="countdownDiv" style="font-size:80px;"></div><br>
+			<span style="font-size:30px;">Choose your stats and username below:</span>
+
+			<div id="pointsLeft">Skill points left: 6 points</div>
+
+			<div id="statsContainer" style="font-size:30px; display:inline;">
+				<h2><span color="830300"><b>Strength</b></span></h2>
+				<h5>Increases health and damage</h5>
+				<div style="margin-left:auto; width:400px; margin-right:auto;">
+				<button onclick="updateLobbyClient('brawn', 'SUBTRACT');" style="background-color:#000000; color:#FFFFFF; width:30px; height:30px; border-radius:5px; float:left;">-</button> <div id="brawn_container" style="width:300px; height:30px; border:solid; border-width:2px; float:left;"> <div id="brawn_amount" style="width:0px; height:30px;"></div> </div> <button onclick="updateLobbyClient('brawn', 'ADD');" style="background-color:#000000; color:#FFFFFF; width:30px; height:30px; border-radius:5px; float:left;">+</button><br><br><br>
+				</div>
+
+				<h2><span color="003366">Resourcefulness</span></h2>
+				<h5>Increases attack speed and makes food and water consumption more efficient</h5>
+				<div style="margin-left:auto; width:400px; margin-right:auto;">
+				<button onclick="updateLobbyClient('intelligence', 'SUBTRACT');" style="background-color:#000000; color:#FFFFFF; width:30px; height:30px; border-radius:5px; float:left;">-</button> <div id="intelligence_container" style="width:300px; height:30px; border:solid; border-width:2px; float:left;"> <div id="intelligence_amount" style="width:0px; height:30px;"></div> </div> <button onclick="updateLobbyClient('intelligence', 'ADD');" style="background-color:#000000; color:#FFFFFF; width:30px; height:30px; border-radius:5px; float:left;">+</button><br><br><br>
+				</div>
+
+				<h2><span color="0D540D">Agility</span></h2>
+				<h5>Increases movement speed and stamina regeneration</h5>
+				<div style="margin-left:auto; width:400px; margin-right:auto;">
+				<button onclick="updateLobbyClient('agility', 'SUBTRACT');" style="background-color:#000000; color:#FFFFFF; width:30px; height:30px; border-radius:5px; float:left;">-</button> <div id="agility_container" style="width:300px; height:30px; border:solid; border-width:2px; float:left;"> <div id="agility_amount" style="width:0px; height:30px;"></div> </div> <button onclick="updateLobbyClient('agility', 'ADD');" style="background-color:#000000; color:#FFFFFF; width:30px; height:30px; border-radius:5px; float:left;">+</button><br><br><br>
+				</div>
+			</div>
+			<div id="usernameContainer" style="font-size:50px;">
+				Username: <input type="text" id="usernameTextbox" style="font-size:50px;"></input>
+			</div>
+			<br>
+			<button id="submitButton" onclick="updateLobbyClient('', ''); submitStatData();" style="font-size:80px; border-radius:8px; background-color:#333333; color:#FFFFFF; font-family:'my_font';">Submit</button>
+			</center>
+		</div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/frontend.js"></script>
+	</body>
+</html>

@@ -68,7 +68,7 @@ var game_trigger;
 
 Array.prototype.clean = function(deleteValue) {
   for (var i = 0; i < this.length; i++) {
-    if (this[i] == deleteValue) {         
+    if (this[i] == deleteValue) {
       this.splice(i, 1);
       i--;
     }
@@ -107,22 +107,22 @@ function addNewPlayer(socket_id, username, brawn_points, intelligence_points, ag
 	player.username = username;
 
 	console.log("added: " + username);
-	
+
 	player.brawn_points = brawn_points;
 	player.intelligence_points = intelligence_points;
 	player.agility_points = agility_points;
-	
+
 	player.windowWidth = 500;
 	player.windowHeight = 500;
-	
+
 	player.xPos = 0;
 	player.yPos = 0;
 
 	player.xVel = 0;
 	player.yVel = 0;
-	
+
 	player.aimDirection = 0;
-	
+
 	player.mouseX = 0;
 	player.mouseY = 0;
 	player.isMouseDown = false;
@@ -139,28 +139,28 @@ function addNewPlayer(socket_id, username, brawn_points, intelligence_points, ag
 	player.isThreeDown = false;
 	player.isFourDown = false;
 	player.isFiveDown = false;
-	
+
 	player.max_health = BASE_PLAYER_HEALTH + player.brawn_points*6;
 	player.health = player.max_health;
-	
+
 	player.base_damage = BASE_PLAYER_DAMAGE + player.brawn_points*0.2;
-	
+
 	player.max_stamina = BASE_PLAYER_STAMINA + player.agility_points*15;
 	player.stamina = player.max_stamina;
 	player.stamina_regen = BASE_STAMINA_REGEN;
-	
+
 	player.movespeed = BASE_PLAYER_MOVESPEED + player.agility_points*0.3;
-	
+
 	player.inventory = ["", "", "", "", ""];
 	player.inventoryFocusIndex = 0;
-	
+
 	player.hunger = 100;
 	player.thirst = 100;
-	
+
 	player.attackAnimationStep = 0;
-	
+
 	player.player_knowledge = {};
-	
+
 	players.push(player);
 }
 
@@ -184,7 +184,7 @@ function getItem(name){
 
 function solvePhysics(){
 	if(didFinishLoading){map_radius *= MAP_SIZE_DECAY;}
-		
+
 	for(var n = 0; n < creatures.length; n++){
 		creatureAI(creatures[n]);
 	}
@@ -192,29 +192,29 @@ function solvePhysics(){
 	if(stage == "GAMEPLAY" && players.length > 1){
 		gotIntoGame = true;
 	}
-	
+
 	for(var n = 0; n < creatures.length; n++){
 		if(distFrom(creatures[n].xPos, creatures[n].yPos, MAP_CENTER_X, MAP_CENTER_Y) > map_radius+120){
 			delete creatures[n];
 		}
 	}
-	
+
 	for(var n = 0; n < items.length; n++){
 		if(distFrom(items[n].xPos, items[n].yPos, MAP_CENTER_X, MAP_CENTER_Y) > map_radius+120){
 			delete items[n];
 		}
 	}
-	
+
 	for(var n = 0; n < obstacles.length; n++){
 		if(distFrom(obstacles[n].xPos, obstacles[n].yPos, MAP_CENTER_X, MAP_CENTER_Y) > map_radius+120){
 			delete obstacles[n];
 		}
 	}
-	
+
 	creatures.clean(undefined);
 	items.clean(undefined);
 	obstacles.clean(undefined);
-	
+
 	if(stage == "GAMEPLAY"){
 		if(!gotIntoGame){
 			console.log("NOT ENOUGH!");
@@ -231,7 +231,7 @@ function solvePhysics(){
 		}else{
 			if(players.length <= 1){
 			players.clean(undefined);
-				
+
 			stage = "END";
 			gotIntoGame = false;
 			didFinishLoading = false;
@@ -245,25 +245,25 @@ function solvePhysics(){
 		}
 	}
 
-	
+
 	for(var i = 0; i < players.length; i++){
 		if(typeof players[i] !== 'undefined'){
 			if(distFrom((players[i].xPos+20), (players[i].yPos+20), MAP_CENTER_X, MAP_CENTER_Y) > map_radius-20){
 				if(stage == "GAMEPLAY"){
 					var deltaX = players[i].xPos - MAP_CENTER_X;
 					var deltaY = players[i].yPos - MAP_CENTER_Y;
-					
+
 					var distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-					
+
 					var unitX = deltaX/distance;
 					var unitY = deltaY/distance;
-					
+
 					players[i].xVel = -unitX * WALL_BOUNCE;
 					players[i].yVel = -unitY * WALL_BOUNCE;
 
 					console.log("-unitX:" + -unitX);
 					console.log("-unitY:" + -unitY);
-					
+
 					players[i].xPos = MAP_CENTER_X + unitX * (map_radius-18) - 20;
 					players[i].yPos = MAP_CENTER_Y + unitY * (map_radius-18) - 20;
 
@@ -272,7 +272,7 @@ function solvePhysics(){
 			}
 
 			var oldx = players[i].xPos;
-			var oldy = players[i].yPos;	
+			var oldy = players[i].yPos;
 
 			players[i].xPos += players[i].xVel;
 			players[i].yPos += players[i].yVel;
@@ -282,15 +282,15 @@ function solvePhysics(){
 
 			players[i].hunger = Math.max(players[i].hunger-HUNGER_LOSS, 0);
 			players[i].thirst = Math.max(players[i].thirst-THIRST_LOSS, 0);
-			
+
 			if(players[i].hunger <= 10){
 				players[i].health -= MALNOURISH_DAMAGE;
 			}
-			
+
 			if(players[i].thirst <= 10){
 				players[i].health -= MALNOURISH_DAMAGE;
 			}
-			
+
 			players[i].aimDirection = Math.atan2(players[i].mouseY - players[i].windowHeight/2, players[i].mouseX - players[i].windowWidth/2);
 			players[i].stamina = Math.min(players[i].max_stamina, players[i].stamina+players[i].stamina_regen);
 
@@ -315,8 +315,8 @@ function solvePhysics(){
 				}
 			}
 
-			
-			
+
+
 			if(players[i].isShiftDown && players[i].stamina >= STAMINA_USAGE){
 				if(players[i].isRightDown) players[i].xPos += (players[i].movespeed * 2);
 				if(players[i].isLeftDown) players[i].xPos -= (players[i].movespeed * 2);
@@ -325,7 +325,7 @@ function solvePhysics(){
 				if(players[i].isRightDown) players[i].xPos += players[i].movespeed;
 				if(players[i].isLeftDown) players[i].xPos -= players[i].movespeed;
 			}
-			
+
 			for(var j = 0; j < obstacles.length; j++){
 				if(typeof obstacles[j] !== 'undefined'){
 					if(obstacles[j].type == "TREE"){
@@ -343,7 +343,7 @@ function solvePhysics(){
 					}
 				}
 			}
-			
+
 			if(players[i].isShiftDown && players[i].stamina >= STAMINA_USAGE){
 				if(players[i].isUpDown) players[i].yPos -= (players[i].movespeed * 2);
 				if(players[i].isDownDown) players[i].yPos += (players[i].movespeed * 2);
@@ -352,7 +352,7 @@ function solvePhysics(){
 				if(players[i].isUpDown) players[i].yPos -= players[i].movespeed;
 				if(players[i].isDownDown) players[i].yPos += players[i].movespeed;
 			}
-			
+
 			for(var j = 0; j < obstacles.length; j++){
 				if(typeof obstacles[j] !== 'undefined'){
 					if(obstacles[j].type == "TREE"){
@@ -369,7 +369,7 @@ function solvePhysics(){
 						}
 					}
 				}
-			}	
+			}
 
 			if(players[i].attackAnimationStep == 4){
 				for(var j = 0; j < players.length; j++){
@@ -399,7 +399,7 @@ function solvePhysics(){
 					}
 				}
 			}
-			
+
 			if(players[i].attackAnimationStep != 0){
 				if(players[i].attackAnimationStep > ITEM_STATS[getItem(players[i].inventory[players[i].inventoryFocusIndex])][2]*(60-2*players[i].intelligence_points)){
 					players[i].attackAnimationStep = 0;
@@ -407,13 +407,13 @@ function solvePhysics(){
 					players[i].attackAnimationStep++;
 				}
 			}
-			
+
 			if(players[i].isMouseDown){
 				if(players[i].attackAnimationStep == 0){
 					players[i].attackAnimationStep = 1;
 				}
 			}
-			
+
 			if(players[i].isOneDown){
 				players[i].inventoryFocusIndex = 0;
 			}
@@ -429,7 +429,7 @@ function solvePhysics(){
 			if(players[i].isFiveDown){
 				players[i].inventoryFocusIndex = 4;
 			}
-			
+
 			if(players[i].isSpaceDown){
 				if(players[i].inventory[players[i].inventoryFocusIndex] == ""){
 					for(var j = 0; j < items.length; j++){
@@ -442,7 +442,7 @@ function solvePhysics(){
 			}
 
 		//	console.log("Players: " + players.length + " and Stage: " + stage);
-			
+
 			if(players[i].isEDown){ //fix
 				var item = {};
 				item.xPos = Math.round(players[i].xPos/BLOCK_SIZE)*BLOCK_SIZE;
@@ -453,7 +453,7 @@ function solvePhysics(){
 				}
 				players[i].inventory[players[i].inventoryFocusIndex] = "";
 			}
-			
+
 			if(players[i].isEnterDown){
 				if(players[i].inventory[players[i].inventoryFocusIndex] == "firstaid"){
 					players[i].health = Math.min(players[i].max_health, players[i].health += FIRST_AID_HEAL);
@@ -468,7 +468,7 @@ function solvePhysics(){
 					players[i].inventory[players[i].inventoryFocusIndex] = "";
 				}
 			}
-			
+
 			for(var n = 0; n < creatures.length; n++){
 				if(typeof creatures[n] !== 'undefined'){
 					if(Math.abs(creatures[n].xPos - players[i].xPos) < 40 && Math.abs(creatures[n].yPos - players[i].yPos) < 40){
@@ -486,13 +486,13 @@ function solvePhysics(){
 					}
 				}
 			}
-			
+
 			if(players[i].health <= 0){
 				delete players[i];
 			}
-			
-			
-			
+
+
+
 			players.clean(undefined);
 			obstacles.clean(undefined);
 			items.clean(undefined);
@@ -508,18 +508,18 @@ function creatureAI(creature){
 			if(distFrom(creature.xPos, creature.yPos, creature.targetX, creature.targetY) < 20){
 				var targetX = Math.random()*2 - 1;
 				var targetY = Math.random()*2 - 1;
-			
+
 				var distance = Math.sqrt(targetX*targetX + targetY*targetY);
-			
+
 				var unitX = targetX/distance;
 				var unitY = targetY/distance;
-				
-			
+
+
 				creature.targetX = creature.xPos + unitX*160;
 				creature.targetY = creature.yPos + unitY*160;
 				creature.unitX = unitX;
 				creature.unitY = unitY;
-			}	
+			}
 			creature.xPos += creature.unitX * WOLF_MOVE_SPEED/2;
 			creature.yPos += creature.unitY * WOLF_MOVE_SPEED/2;
 		}
@@ -528,28 +528,28 @@ function creatureAI(creature){
 			var deltaX = (creature.xPos-nearestPlayer(creature).xPos);
 			var deltaY = (creature.yPos-nearestPlayer(creature).yPos);
 			var distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-		
+
 			var unitX = deltaX/distance;
 			var unitY = deltaY/distance;
-		
+
 			creature.xPos -= unitX * WOLF_MOVE_SPEED;
 			creature.yPos -= unitY * WOLF_MOVE_SPEED;
-			
+
 			creature.direction = Math.atan2(creature.yPos - nearestPlayer(creature).yPos, creature.xPos - nearestPlayer(creature).xPos);
 		}
 		if(creature.type == "PIG"){
 			var deltaX = (creature.xPos-nearestPlayer(creature).xPos);
 			var deltaY = (creature.yPos-nearestPlayer(creature).yPos);
 			var distance = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
-		
+
 			var unitX = deltaX/distance;
 			var unitY = deltaY/distance;
-		
+
 			creature.xPos += unitX * PIG_MOVE_SPEED;
 			creature.yPos += unitY * PIG_MOVE_SPEED;
-			
+
 			creature.direction = Math.atan2(creature.yPos - nearestPlayer(creature).yPos, creature.xPos - nearestPlayer(creature).xPos);
-			
+
 		}
 	}
 	}
@@ -595,14 +595,14 @@ function addNewObstacle(type, mapRadius){
 		while(!canBeReleased){
 			obstacle.xPos = Math.round((Math.random()*map_radius*2)/BLOCK_SIZE)*BLOCK_SIZE;
 			obstacle.yPos = Math.round((Math.random()*map_radius*2)/BLOCK_SIZE)*BLOCK_SIZE;
-		
+
 			isOk = true;
 			for(var i = 0; i < obstacles.length; i++){
 				if(Math.abs(obstacle.xPos - obstacles[i].xPos) < 90 && Math.abs(obstacle.yPos - obstacles[i].yPos) < 90){
 					isOk = false;
 				}
 			}
-			
+
 			if(isOk){
 				canBeReleased = true;
 			}
@@ -623,7 +623,7 @@ function addNewItem(type, mapRadius){
 		while(!canBeReleased){
 			item.xPos = Math.round((Math.random()*map_radius*2)/BLOCK_SIZE)*BLOCK_SIZE;
 			item.yPos = Math.round((Math.random()*map_radius*2)/BLOCK_SIZE)*BLOCK_SIZE;
-		
+
 			isOk = true;
 			for(var i = 0; i < obstacles.length; i++){
 				if(Math.abs(item.xPos - obstacles[i].xPos) < 90 && Math.abs(item.yPos - obstacles[i].yPos) < 90){
@@ -635,16 +635,16 @@ function addNewItem(type, mapRadius){
 					isOk = false;
 				}
 			}
-			
+
 			if(isOk){
 				canBeReleased = true;
 			}
 		}
 	}
-	
+
 	item.type = type;
 	items.push(item);
-	
+
 }
 
 function addNewItemAt(type, xPos, yPos, mapRadius){
@@ -658,7 +658,7 @@ function addNewItemAt(type, xPos, yPos, mapRadius){
 		while(!canBeReleased){
 			item.xPos = Math.round((Math.random()*map_radius*2)/BLOCK_SIZE)*BLOCK_SIZE;
 			item.yPos = Math.round((Math.random()*map_radius*2)/BLOCK_SIZE)*BLOCK_SIZE;
-		
+
 			isOk = true;
 			for(var i = 0; i < obstacles.length; i++){
 				if(Math.abs(item.xPos - obstacles[i].xPos) < 90 && Math.abs(item.yPos - obstacles[i].yPos) < 90){
@@ -670,17 +670,17 @@ function addNewItemAt(type, xPos, yPos, mapRadius){
 					isOk = false;
 				}
 			}
-			
+
 			if(isOk){
 				canBeReleased = true;
 			}
 		}
 	}
-	
-	
+
+
 	item.type = type;
 	items.push(item);
-	
+
 }
 
 function generateMap(mapRadius){
@@ -702,30 +702,30 @@ function generateMap(mapRadius){
 		addNewItem(ITEM_STATS[randomNum][0], mapRadius);
 		console.log("Added item: " + ITEM_STATS[randomNum][0]);
 	}
-	
+
 	for(var i = 0; i < CREATURE_COUNT/2; i++){
 		addNewCreature("WOLF", mapRadius);
 		addNewCreature("PIG", mapRadius);
 	}
-	
+
 	for(var i = 0; i < OBSTACLE_COUNT; i++){
 		if(distFrom(obstacles[i].xPos, obstacles[i].yPos, MAP_CENTER_X, MAP_CENTER_Y) < CENTER_SIZE){
 			delete obstacles[i];
 		}
 	}
-	
+
 	for(var i = 0; i < ITEM_COUNT; i++){
 		if(distFrom(items[i].xPos, items[i].yPos, MAP_CENTER_X, MAP_CENTER_Y) < CENTER_SIZE){
 			delete items[i];
 		}
 	}
-	
+
 	for(var i = 0; i < CREATURE_COUNT/2; i++){
 		if(distFrom(creatures[i].xPos, creatures[i].yPos, MAP_CENTER_X, MAP_CENTER_Y) < CENTER_SIZE){
 			delete creatures[i];
 		}
 	}
-	
+
 	for(var i = 0; i < 15; i++){
 		var randomNum = 0;
 		while(ITEM_STATS[randomNum][0] == ""){
@@ -733,12 +733,12 @@ function generateMap(mapRadius){
 		}
 		addNewItemAt(ITEM_STATS[randomNum][0], -125+MAP_CENTER_X+Math.round((Math.random()*250*2)/BLOCK_SIZE)*BLOCK_SIZE, -125+MAP_CENTER_Y+Math.round((Math.random()*250*2)/BLOCK_SIZE)*BLOCK_SIZE, mapRadius);
 	}
-	
+
 	players.clean(undefined);
 	obstacles.clean(undefined);
 	items.clean(undefined);
 	creatures.clean(undefined);
-	
+
 }
 
 function createEdge(vertex_a, vertex_b, player, parent_object){
@@ -771,16 +771,16 @@ function onSegment(p, q, r)
     if (q.xPos <= Math.max(p.xPos, r.xPos) && q.xPos >= Math.min(p.xPos, r.xPos) && q.yPos <= Math.max(p.yPos, r.yPos) && q.yPos >= Math.min(p.yPos, r.yPos)) return true;
     return false;
 }
- 
+
 function orientation(p, q, r)
 {
     var val = (q.yPos - p.yPos) * (r.xPos - q.xPos) -(q.xPos - p.xPos) * (r.yPos - q.yPos);
- 
+
     if (val == 0) return 0;  // colinear
- 
+
     return (val > 0)? 1: 2; // clock or counterclock wise
 }
- 
+
 function doIntersect(p1, q1, p2, q2){
     // Find the four orientations needed for general and
     // special cases
@@ -788,23 +788,23 @@ function doIntersect(p1, q1, p2, q2){
     var o2 = orientation(p1, q1, q2);
     var o3 = orientation(p2, q2, p1);
     var o4 = orientation(p2, q2, q1);
- 
+
     // General case
     if (o1 != o2 && o3 != o4)return true;
- 
+
     // Special Cases
     // p1, q1 and p2 are colinear and p2 lies on segment p1q1
     if (o1 == 0 && onSegment(p1, p2, q1)) return true;
- 
+
     // p1, q1 and p2 are colinear and q2 lies on segment p1q1
     if (o2 == 0 && onSegment(p1, q2, q1)) return true;
- 
+
     // p2, q2 and p1 are colinear and p1 lies on segment p2q2
     if (o3 == 0 && onSegment(p2, p1, q2)) return true;
- 
+
      // p2, q2 and q1 are colinear and q1 lies on segment p2q2
     if (o4 == 0 && onSegment(p2, q1, q2)) return true;
- 
+
     return false; // Doesn't fall in any of the above cases
 }
 
@@ -815,20 +815,20 @@ function isHiddenByShadow(currEdge, currObject, objectSize, q, offset){
 	var doesLowerRight = doIntersect(createVertex(players[q].xPos+BLOCK_SIZE/2, players[q].yPos+BLOCK_SIZE/2), createVertex(currObject.xPos + objectSize + offset, currObject.yPos + objectSize + offset), currEdge.vertex_a, currEdge.vertex_b);
 	return doesUpperLeft || doesUpperRight || doesLowerLeft || doesLowerRight;
 }
- 
+
 
 function packageAllGameData(q){
 		var player_knowledge = {};
-				
+
 		var player_obstacles = [];
 		var player_players = [];
 		var player_items = [];
 		var player_creatures = [];
-				
+
 		var vertices = [];
 		var edges = [];
 		var shadows = [];
-				
+
 		for(var r = 0; r < players.length; r++){ //add to player knowledge any players in vision radius and add their edges (except don't add player's own edges)
 			if(distFrom(players[r].xPos, players[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_players.push(players[r]);
@@ -840,7 +840,7 @@ function packageAllGameData(q){
 					var vertex3 = createVertex(players[r].xPos + BLOCK_SIZE, players[r].yPos + BLOCK_SIZE);
 					vertices.push(vertex3);
 					var vertex4 = createVertex(players[r].xPos, players[r].yPos + BLOCK_SIZE);
-					vertices.push(vertex4);		
+					vertices.push(vertex4);
 
 					edges.push(createEdge(vertex1, vertex2, players[q], players[r]));
 					edges.push(createEdge(vertex2, vertex3, players[q], players[r]));
@@ -849,7 +849,7 @@ function packageAllGameData(q){
 				}
 			}
 		}
-				
+
 		for(var r = 0; r < creatures.length; r++){ //add to player knowledge any creatures in vision radius and add their edges
 			if(distFrom(creatures[r].xPos, creatures[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_creatures.push(creatures[r]);
@@ -860,7 +860,7 @@ function packageAllGameData(q){
 				var vertex3 = createVertex(creatures[r].xPos+BLOCK_SIZE, creatures[r].yPos + BLOCK_SIZE);
 				vertices.push(vertex3);
 				var vertex4 = createVertex(creatures[r].xPos, creatures[r].yPos + BLOCK_SIZE);
-				vertices.push(vertex4);		
+				vertices.push(vertex4);
 
 				edges.push(createEdge(vertex1, vertex2, players[q], creatures[r]));
 				edges.push(createEdge(vertex2, vertex3, players[q], creatures[r]));
@@ -868,7 +868,7 @@ function packageAllGameData(q){
 				edges.push(createEdge(vertex4, vertex1, players[q], creatures[r]));
 			}
 		}
-				
+
 		for(var r = 0; r < obstacles.length; r++){ //add to player knowledge any obstacles in vision radius and add their edges
 			if(distFrom(obstacles[r].xPos, obstacles[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_obstacles.push(obstacles[r]);
@@ -880,7 +880,7 @@ function packageAllGameData(q){
 					var vertex3 = createVertex(obstacles[r].xPos - BLOCK_SIZE*0.5 + BLOCK_SIZE*2, obstacles[r].yPos - BLOCK_SIZE*0.5 + BLOCK_SIZE*2);
 					vertices.push(vertex3);
 					var vertex4 = createVertex(obstacles[r].xPos - BLOCK_SIZE*0.5, obstacles[r].yPos - BLOCK_SIZE*0.5 + BLOCK_SIZE*2);
-					vertices.push(vertex4);		
+					vertices.push(vertex4);
 
 					edges.push(createEdge(vertex1, vertex2, players[q], obstacles[r]));
 					edges.push(createEdge(vertex2, vertex3, players[q], obstacles[r]));
@@ -894,7 +894,7 @@ function packageAllGameData(q){
 					var vertex3 = createVertex(obstacles[r].xPos+BLOCK_SIZE, obstacles[r].yPos+BLOCK_SIZE);
 					vertices.push(vertex3);
 					var vertex4 = createVertex(obstacles[r].xPos, obstacles[r].yPos+BLOCK_SIZE);
-					vertices.push(vertex4);		
+					vertices.push(vertex4);
 
 					edges.push(createEdge(vertex1, vertex2, players[q], obstacles[r]));
 					edges.push(createEdge(vertex2, vertex3, players[q], obstacles[r]));
@@ -903,20 +903,20 @@ function packageAllGameData(q){
 				}
 			}
 		}
-		
+
 		for(var r = 0; r < items.length; r++){ //add to player knowledge any items in vision radius
 			if(distFrom(items[r].xPos, items[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_items.push(items[r]);
 			}
 		}
-				
+
 		edges.sort(function(a, b){ //sort edges by distance
  				return a.distance-b.distance;
 		});
-		
+
 		for(var r = 0; r < player_players.length; r++){ //delete any edges that are too close to current player (that originate from other players)
 			if(typeof player_players[r] !== "undefined"){
-				
+
 				for(var s = 0; s < player_players.length; s++){
 					if(typeof player_players[s] !== "undefined"){
 						if(s !== r){
@@ -932,14 +932,14 @@ function packageAllGameData(q){
 						}
 					}
 				}
-				
+
 			}
 		}
 		edges.clean(undefined);
-		
+
 		for(var r = 0; r < player_creatures.length; r++){ //delete any edges that are too close to current player
 			if(typeof player_creatures[r] !== "undefined"){
-				
+
 				for(var s = 0; s < player_players.length; s++){
 					if(typeof player_players[s] !== "undefined"){
 
@@ -952,17 +952,17 @@ function packageAllGameData(q){
 									}
 								}
 							}
-						
+
 					}
 				}
-				
+
 			}
 		}
 		edges.clean(undefined);
-		
+
 		for(var r = edges.length-1; r >= 0; r--){ //delete any edges that are hidden by other edges
 			if(typeof edges[r] !== "undefined"){
-				
+
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== "undefined"){
 						if(s != r){
@@ -973,13 +973,13 @@ function packageAllGameData(q){
 						}
 					}
 				}
-				
+
 			}
 		}
 
 		edges.clean(undefined);
-		
-		for(var r = 0; r < player_players.length; r++){ //remove any other players that are hidden by an edge (and remove their edges) - note: other players can't be removed by their own edges 
+
+		for(var r = 0; r < player_players.length; r++){ //remove any other players that are hidden by an edge (and remove their edges) - note: other players can't be removed by their own edges
 			if(player_players[r] != players[q]){ //dont run anything that could remove current player
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== 'undefined' && typeof player_players[r] !== 'undefined'){
@@ -993,18 +993,18 @@ function packageAllGameData(q){
 									}
 								}
 								delete player_players[r];
-										
+
 							}
 						}
 					}
 				}
 			}
 		}
-		
+
 		edges.clean(undefined);
 		player_players.clean(undefined);
-		
-		for(var r = 0; r < player_creatures.length; r++){ //remove any creatures that are hidden by an edge (and remove their edges) - note: other creatures can't be removed by their own edges 
+
+		for(var r = 0; r < player_creatures.length; r++){ //remove any creatures that are hidden by an edge (and remove their edges) - note: other creatures can't be removed by their own edges
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== 'undefined' && typeof player_creatures[r] !== 'undefined'){
 						if(isHiddenByShadow(edges[s], player_creatures[r], BLOCK_SIZE, q, 0)){
@@ -1017,17 +1017,17 @@ function packageAllGameData(q){
 									}
 								}
 								delete player_creatures[r];
-										
+
 							}
 						}
 					}
 				}
 		}
-		
+
 		edges.clean(undefined);
 		player_creatures.clean(undefined);
-		
-		/*for(var r = 0; r < player_obstacles.length; r++){ //remove any obstacles that are hidden by an edge (and remove their edges) - note: obstacles can't be removed by their own edges 
+
+		/*for(var r = 0; r < player_obstacles.length; r++){ //remove any obstacles that are hidden by an edge (and remove their edges) - note: obstacles can't be removed by their own edges
 				for(var s = 0; s < edges.length; s++){
 					if(typeof edges[s] !== 'undefined' && typeof player_obstacles[r] !== 'undefined'){
 						if(player_obstacles[r].type == "TREE"){ //important for doIntersect: need to adjust point for segment (center is in a different place if obstacle is a tree)
@@ -1040,7 +1040,7 @@ function packageAllGameData(q){
 											}
 										}
 									}
-									//delete player_obstacles[r];		
+									//delete player_obstacles[r];
 								}
 							}
 						}else{ //obstacle is normal size
@@ -1053,17 +1053,17 @@ function packageAllGameData(q){
 											}
 										}
 									}
-									//delete player_obstacles[r];		
+									//delete player_obstacles[r];
 								}
 							}
 						}
 					}
 				}
 		}
-		
+
 		edges.clean(undefined);
 		player_obstacles.clean(undefined);*/
-		
+
 		for(var r = 0; r < player_items.length; r++){ //remove any items that are hidden by an edge - note: items don't have edges, so we treat this case differently
 			for(var s = 0; s < edges.length; s++){
 				if(typeof edges[s] !== 'undefined' && typeof player_items[r] !== 'undefined'){
@@ -1073,10 +1073,10 @@ function packageAllGameData(q){
 				}
 			}
 		}
-		
+
 		player_items.clean(undefined);
-	
-		
+
+
 		/*for(var r = 0; r < edges.length; r++){ //combine touching edges
 			for(var s = 0; s < edges.length; s++){
 				if(r != s){
@@ -1102,14 +1102,14 @@ function packageAllGameData(q){
 				}
 			}
 		}
-		
+
 		edges.clean(undefined);*/
-		
+
 		for(var r = 0; r < edges.length; r++){
 			shadows.push(createShadow(createVertex(players[q].xPos+20, players[q].yPos+20), edges[r].vertex_a, edges[r].vertex_b));
 		}
-		
-				
+
+
 		player_knowledge.stage = stage;
 		player_knowledge.players = player_players;
 		player_knowledge.countdown = countdown;
@@ -1121,9 +1121,9 @@ function packageAllGameData(q){
 		player_knowledge.creatures = player_creatures;
 		player_knowledge.draw_length = MAX_VISION_RADIUS;
 		player_knowledge.shadows = shadows;
-		
+
 		return player_knowledge;
-	
+
 }
 
 function sendAllGameData(){
@@ -1140,26 +1140,24 @@ function sendAllGameData(){
 }
 
 app.set('port', PORT_NUMBER);
-app.get('/', function(req, res){
-	res.sendFile(__dirname + '/index.html');
-});
+app.use(express.static(__dirname + '/public'));
 
 io.on('connection', function(socket){
 	var current_socket_id = socket.id;
 	console.log("connected: " + current_socket_id);
-	
+
 	socket.on('disconnect', function(){
 		console.log("disconnected: " + current_socket_id);
 		delete players[getPlayerById(current_socket_id)];
 	});
-	
+
 	if(stage == "STATS"){
 		socket.on('register_form', function(data){
 			console.log(data[3]);
 			addNewPlayer(current_socket_id, data[3], data[0], data[1], data[2]);
 		});
 	}
-	
+
 	socket.on('user_input_state', function(data){
 		if(stage == "GAMEPLAY"){
 			if(typeof players[getPlayerById(current_socket_id)] !== 'undefined'){
@@ -1178,11 +1176,11 @@ io.on('connection', function(socket){
 				players[getPlayerById(current_socket_id)].isTwoDown = data[12];
 				players[getPlayerById(current_socket_id)].isThreeDown = data[13];
 				players[getPlayerById(current_socket_id)].isFourDown = data[14];
-				players[getPlayerById(current_socket_id)].isFiveDown = data[15];			
+				players[getPlayerById(current_socket_id)].isFiveDown = data[15];
 			}
 		}
 	});
-	
+
 	socket.on('window_size_data', function(data){
 		if(stage == "GAMEPLAY"){
 			if(typeof players[getPlayerById(current_socket_id)] !== 'undefined'){
@@ -1191,9 +1189,9 @@ io.on('connection', function(socket){
 			}
 		}
 	});
-	
+
 	io.sockets.connected[current_socket_id].emit('your_socket_id', current_socket_id);
-	
+
 });
 
 
