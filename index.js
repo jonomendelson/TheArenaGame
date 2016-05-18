@@ -1140,7 +1140,7 @@ function sendAllGameData(){
 }
 
 app.set('port', PORT_NUMBER);
-app.use(express.static(__dirname + '/public'));
+app.use(require('express').static(__dirname + '/public'));
 
 io.on('connection', function(socket){
 	var current_socket_id = socket.id;

@@ -1,0 +1,23 @@
+{
+  "name": "the-arena-game",
+  "version": "1.0.0",
+  "description": "A game made at defHacks.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonomendelson/TheArenaGame.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jonomendelson/TheArenaGame/issues"
+  },
+  "homepage": "https://github.com/jonomendelson/TheArenaGame#readme",
+  "dependencies": {
+    "express": "^4.13.4",
+    "socket.io": "^1.4.6"
+  }
+}
