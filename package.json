@@ -4,7 +4,8 @@
   "description": "A game made at defHacks.",
   "main": "index.js",
   "scripts": {
-    "test": "node ."
+    "test": "node .",
+    "endless": "while true; do node . 2>&1 | tee `date +%Y-%m-%d`.txt; done"
   },
   "repository": {
     "type": "git",
