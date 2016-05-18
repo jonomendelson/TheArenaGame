@@ -32,7 +32,7 @@ var BASE_STAMINA_REGEN = 0.5;
 var MAX_VISION_RADIUS = 600;
 
 //item name, damage multiplier (over basic attack), seconds before reuse, range
-var ITEM_STATS = [["", 1, 0.3, 90], ["dagger", 2, 0.4, 90], ["sword", 3, 0.7, 150], ["firstaid", 1, 0.8, 90], ["empty_bottle", 1, 0.8, 90], ["full_bottle", 1, 0.8, 90],  ["meat", 1, 0.8, 90]];
+var ITEM_STATS = [["", 1, 0.3, 90], ["dagger", 2, 0.4, 90], ["sword", 3, 0.7, 150], ["firstaid", 1, 0.8, 90], ["empty_bottle", 1, 0.8, 90], ["full_bottle", 1, 0.8, 90],	["meat", 1, 0.8, 90]];
 
 var WOLF_MOVE_SPEED = 3.5;
 var PIG_MOVE_SPEED = 2;
@@ -67,13 +67,13 @@ var lobby_trigger;
 var game_trigger;
 
 Array.prototype.clean = function(deleteValue) {
-  for (var i = 0; i < this.length; i++) {
-    if (this[i] == deleteValue) {
-      this.splice(i, 1);
-      i--;
-    }
-  }
-  return this;
+	for (var i = 0; i < this.length; i++) {
+		if (this[i] == deleteValue) {
+			this.splice(i, 1);
+			i--;
+		}
+	}
+	return this;
 };
 
 function distFrom(xOne, yOne, xTwo, yTwo){
@@ -768,44 +768,44 @@ function createShadow(origin_vertex, cast_vertex_a, cast_vertex_b){
 
 function onSegment(p, q, r)
 {
-    if (q.xPos <= Math.max(p.xPos, r.xPos) && q.xPos >= Math.min(p.xPos, r.xPos) && q.yPos <= Math.max(p.yPos, r.yPos) && q.yPos >= Math.min(p.yPos, r.yPos)) return true;
-    return false;
+		if (q.xPos <= Math.max(p.xPos, r.xPos) && q.xPos >= Math.min(p.xPos, r.xPos) && q.yPos <= Math.max(p.yPos, r.yPos) && q.yPos >= Math.min(p.yPos, r.yPos)) return true;
+		return false;
 }
 
 function orientation(p, q, r)
 {
-    var val = (q.yPos - p.yPos) * (r.xPos - q.xPos) -(q.xPos - p.xPos) * (r.yPos - q.yPos);
+		var val = (q.yPos - p.yPos) * (r.xPos - q.xPos) -(q.xPos - p.xPos) * (r.yPos - q.yPos);
 
-    if (val == 0) return 0;  // colinear
+		if (val == 0) return 0;	// colinear
 
-    return (val > 0)? 1: 2; // clock or counterclock wise
+		return (val > 0)? 1: 2; // clock or counterclock wise
 }
 
 function doIntersect(p1, q1, p2, q2){
-    // Find the four orientations needed for general and
-    // special cases
-    var o1 = orientation(p1, q1, p2);
-    var o2 = orientation(p1, q1, q2);
-    var o3 = orientation(p2, q2, p1);
-    var o4 = orientation(p2, q2, q1);
+		// Find the four orientations needed for general and
+		// special cases
+		var o1 = orientation(p1, q1, p2);
+		var o2 = orientation(p1, q1, q2);
+		var o3 = orientation(p2, q2, p1);
+		var o4 = orientation(p2, q2, q1);
 
-    // General case
-    if (o1 != o2 && o3 != o4)return true;
+		// General case
+		if (o1 != o2 && o3 != o4)return true;
 
-    // Special Cases
-    // p1, q1 and p2 are colinear and p2 lies on segment p1q1
-    if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+		// Special Cases
+		// p1, q1 and p2 are colinear and p2 lies on segment p1q1
+		if (o1 == 0 && onSegment(p1, p2, q1)) return true;
 
-    // p1, q1 and p2 are colinear and q2 lies on segment p1q1
-    if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+		// p1, q1 and p2 are colinear and q2 lies on segment p1q1
+		if (o2 == 0 && onSegment(p1, q2, q1)) return true;
 
-    // p2, q2 and p1 are colinear and p1 lies on segment p2q2
-    if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+		// p2, q2 and p1 are colinear and p1 lies on segment p2q2
+		if (o3 == 0 && onSegment(p2, p1, q2)) return true;
 
-     // p2, q2 and q1 are colinear and q1 lies on segment p2q2
-    if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+		 // p2, q2 and q1 are colinear and q1 lies on segment p2q2
+		if (o4 == 0 && onSegment(p2, q1, q2)) return true;
 
-    return false; // Doesn't fall in any of the above cases
+		return false; // Doesn't fall in any of the above cases
 }
 
 function isHiddenByShadow(currEdge, currObject, objectSize, q, offset){
@@ -1197,7 +1197,27 @@ io.on('connection', function(socket){
 
 
 lobby_trigger = setInterval(function(){handleLobby();}, 1000);
-game_trigger = setInterval(function(){solvePhysics();  if(stage != "END"){ sendAllGameData();}  }, 1000/FRAME_RATE);
+game_trigger = setInterval(function(){solvePhysics();  if(stage != "END"){ sendAllGameData();}	}, 1000/FRAME_RATE);
 
 
 http.listen(PORT_NUMBER, function(){console.log('listening on *:' + PORT_NUMBER);});
+
+// Upcoming implementation for admining from cli
+// const readline = require('readline');
+// const rl = readline.createInterface({
+// 	input: process.stdin,
+// 	output: process.stdout
+// });
+//
+// rl.on('line', (cmd) => {
+// switch (cmd) {
+// 	case "reload":
+// 	case "reset":
+// 	case "r":
+// 	case "restart":
+//
+// 		break;
+// 		default:
+//
+// 	}
+// });
