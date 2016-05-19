@@ -234,6 +234,13 @@ socket.on('basic_data', function(data){
 	}
 });
 
+function drawRotatedImage (ctx, image, angleRad , xPos, yPos, xAx, yAx) {
+		  ctx.translate(xPos, yPos);
+		  ctx.rotate(angleRad);
+		  ctx.drawImage(image, -xAx, -yAx);
+		  ctx.rotate(-angleRad );
+		  ctx.translate(-xPos, -yPos);
+		};
 
 socket.on('all_game_data', function(data){
 	if(data.stage == "GAMEPLAY"){
@@ -440,7 +447,8 @@ socket.on('all_game_data', function(data){
 		}
 
 		for(var i = 0; i < data.players.length; i++){
-				ctx.drawImage(player_image, data.players[i].xPos - cameraX, data.players[i].yPos - cameraY);
+				drawRotatedImage(ctx, player_image, 45*Math.PI/180, data.players[i].xPos - cameraX, data.players[i].yPos - cameraY, data.players[i].xPos - cameraX+20, data.players[i].yPos - cameraY+20 );
+			
 
 			ctx.fillStyle = "#000000";
 			ctx.fillRect(data.players[i].xPos - cameraX - 31, data.players[i].yPos - cameraY - 11, 102, 7);
