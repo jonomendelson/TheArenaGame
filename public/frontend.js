@@ -356,6 +356,12 @@ socket.on('all_game_data', function(data){
 			if(data.items[i].type == "land_mine"){
 				ctx.drawImage(land_mine, data.items[i].xPos - cameraX,data.items[i].yPos - cameraY);
 			}
+			if(data.items[i].type == "bow"){
+				ctx.drawImage(bow_icon, data.items[i].xPos - cameraX,data.items[i].yPos - cameraY);
+			}
+			if(data.items[i].type == "arrow"){
+				ctx.drawImage(arrow_icon, data.items[i].xPos - cameraX,data.items[i].yPos - cameraY);
+			}
 		}
 
 		for(var i = 0; i < data.creatures.length; i++){
@@ -440,6 +446,12 @@ socket.on('all_game_data', function(data){
 						if(data.players[i].inventory[j] == "meat"){
 							ctx.drawImage(meat, 5+(window.innerWidth*0.75) - 100 * 0.75, 130+window.innerHeight*0.25+j*50);
 						}
+						if(data.players[i].inventory[j] == "bow"){
+							ctx.drawImage(bow_icon, 5+(window.innerWidth*0.75) - 100 * 0.75, 130+window.innerHeight*0.25+j*50);
+						}
+						if(data.players[i].inventory[j] == "arrow"){
+							ctx.drawImage(arrow_icon, 5+(window.innerWidth*0.75) - 100 * 0.75, 130+window.innerHeight*0.25+j*50);
+						}
 					}
 
 				}
@@ -447,7 +459,7 @@ socket.on('all_game_data', function(data){
 		}
 
 		for(var i = 0; i < data.players.length; i++){
-				drawRotatedImage(ctx, player_image, 45*Math.PI/180, data.players[i].xPos - cameraX, data.players[i].yPos - cameraY, data.players[i].xPos - cameraX+20, data.players[i].yPos - cameraY+20 );
+				drawRotatedImage(ctx, player_image, Math.PI/4, data.players[i].xPos - cameraX, data.players[i].yPos - cameraY, data.players[i].xPos - cameraX+20, data.players[i].yPos - cameraY+20 );
 			
 
 			ctx.fillStyle = "#000000";
@@ -455,6 +467,25 @@ socket.on('all_game_data', function(data){
 
 			ctx.fillStyle = "#FF0000";
 			ctx.fillRect(data.players[i].xPos - cameraX - 30, data.players[i].yPos - cameraY - 10, (data.players[i].health/data.players[i].max_health)*100, 5);
+		}
+		for(var i = 0; i < data.projectiles.length; i++){
+			var angle = Math.atan(data.projectiles[i].deltaY/data.projectiles[i].deltaX)
+			if (data.projectiles[i].deltaX < 0) angle = Math.PI/2 - angle;
+			ctx.save(); 
+
+			
+			  ctx.translate(data.projectiles[i].xPos-cameraX, data.projectiles[i]yPos-cameraY);
+
+			  ctx.rotate(angle-Math.PI/4);
+
+			 // draw it up and to the left by half the width
+			 // and height of the image 
+			 ctx.drawImage(arrow_icon, 0, 0);
+
+			 // and restore the co-ords to how they were when we began
+			  ctx.restore(); 
+			
+			
 		}
 	}else if(data.stage == "END"){
 		brawn_points = 0;
