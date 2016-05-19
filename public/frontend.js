@@ -206,7 +206,6 @@ socket.on('basic_data', function(data){
 	if(data.stage == "STATS"){
 		document.getElementById("gameDiv").style.display = "none";
 		document.getElementById("statsDiv").style.display = "block";
-		document.getElementById("stats-header").style.display = "block";
 		document.getElementById("spectatorDiv").style.display = "none";
 		document.getElementById("countdownDiv").innerHTML = data.countdown;
 		if(!submitted){
@@ -216,7 +215,6 @@ socket.on('basic_data', function(data){
 	if(data.stage == "GAMEPLAY"){
 		submitted = false;
 		document.getElementById("statsDiv").style.display = "none";
-		document.getElementById("stats-header").style.display = "none";
 		if(isActivePlayer){
 			document.getElementById("spectatorDiv").style.display = "none";
 			document.getElementById("gameDiv").style.display = "block";
