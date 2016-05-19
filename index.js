@@ -181,6 +181,22 @@ function getItem(name){
 		}
 	}
 }
+function contains(list, element){
+	for (var i = 0; i < list.length; i++){
+		if (list[i] == element) return true;
+	}
+	return false
+}
+function shootArrow(player){
+	var projectile = {};
+
+	projectile.xPos = player.xPos + 20;
+	projectile.yPos = player.yPos + 20;
+	projectile.deltaX = player.mouseX - player.xPos - 20;
+	projectile.deltaY = player.mouseY - player.yPos - 20;
+	projectile.player = player;
+	projectiles.push(projectile);
+}
 
 function solvePhysics(){
 	if(didFinishLoading){map_radius *= MAP_SIZE_DECAY;}
@@ -244,7 +260,17 @@ function solvePhysics(){
 			}
 		}
 	}
-
+	for (var i = 0; i < projectiles.length; i++){
+		if (typeof projectiles[i] !== "undefined"){
+ 			var distance = Math.sqrt(bullets[h].delta_X * bullets[h].delta_X + bullets[h].delta_Y * bullets[h].delta_Y);
+ 			var unit_X = bullets[h].delta_X/distance;
+ 			var unit_Y = bullets[h].delta_Y/distance;
+ 			bullets[h].xPos = bullets[h].xPos + unit_X*ARROW_SPEED;
+ 			bullets[h].yPos = bullets[h].yPos + unit_Y*ARROW_SPEED;
+ 			if (distance > BOW_RANGE) delete projectiles[i];
+ 		}
+	}
+	projectiles.clean(undefined);
 
 	for(var i = 0; i < players.length; i++){
 		if(typeof players[i] !== 'undefined'){
@@ -370,24 +396,79 @@ function solvePhysics(){
 					}
 				}
 			}
-
-			if(players[i].attackAnimationStep == 4){
-				for(var j = 0; j < players.length; j++){
-					if(typeof players[j] !== 'undefined'){
-						if(i != j){
-							var distance = distFrom(players[i].xPos, players[i].yPos, players[j].xPos, players[j].yPos);
-							var angle = Math.atan2(players[j].yPos - players[i].yPos, players[j].xPos - players[i].xPos);
-							if(distance < ITEM_STATS[getItem(players[i].inventory[players[i].inventoryFocusIndex])][3]){
-								if(Math.abs(angle - players[i].aimDirection) < 0.6){
-									players[j].health -= players[i].base_damage * ITEM_STATS[getItem(players[i].inventory[players[i].inventoryFocusIndex])][1];
-								}
-							}
+			for (var j = 0; j < projectiles.length; j++){
+				if (typeof projectiles[j] !== 'undefined'){
+					if (projectiles[j].player.socket_id != players[i].socket_id){
+						if(Math.abs(players[i].xPos - projectiles[j].xPos) < 30 && Math.abs(players[i].yPos-projectiles[j].yPos) < 30){ 
+							players[i].health -= projectiles[j].player.base_damage * ITEM_STATS[8][1];
+							delete projectiles[j];
 						}
 					}
 				}
+			}
+			if (players[i].hitSword ==0){
+		`		var player_i_rectangle = {};
+				player_i_rectangle.top = players[i].yPos+20+10*Math.sin(players[i].aimDirection+Math.PI/2)+ITEM_STATS[getItem(players[i].inventory[players[i].inventoryFocusIndex])][3]*Math.sin(players[i].aimDirection);
+				player_i_rectangle.left = players[i].xPos+20+10*Math.cos(players[i].aimDirection+Math.PI/2) + ITEM_STATS[getItem(players[i].inventory[players[i].inventoryFocusIndex])][3]*Math.cos(players[i].aimDirection);
+				player_i_rectangle.right = players[i].xPos+20+10*Math.cos(players[i].aimDirection-Math.PI/2);
+				player_i_rectanlge.bottom = players[i].yPos+20+10*Math.sin(players[i].aimDirection-Math.PI/2);
+				for(var j = 0; j < players.length; j++){
+					if(typeof players[j] !== 'undefined'){
+						if(i != j){
+							if (players[j].hitSword == 0){
+								if (ITEM_STATS[getItem(players[i].inventory[players[i].inventoryFocusIndex])][0] != "bow"){
+						
+
+									var player_j_rectangle = {};
+									player_j_rectangle.top = players[j].yPos+20+10*Math.sin(players[j].aimDirection+Math.PI/2)+ITEM_STATS[getItem(players[j].inventory[players[j].inventoryFocusIndex])][3]*Math.sin(players[j].aimDirection);
+									player_j_rectangle.left = players[j].xPos+20+10*Math.cos(players[j].aimDirection+Math.PI/2) + ITEM_STATS[getItem(players[j].inventory[players[j].inventoryFocusIndex])][3]*Math.cos(players[j].aimDirection);
+									player_j_rectangle.right = players[j].xPos+20+10*Math.cos(players[j].aimDirection-Math.PI/2);
+									player_j_rectanlge.bottom = players[j].yPos+20+10*Math.sin(players[j].aimDirection-Math.PI/2);
+
+									/*var player_i = {}
+									player_i.top = players[i].yPos;
+									player_i.left = players[i].xPos;
+									player_i.bottom = players[i].yPos+40;
+									player_i.right = players[i].xPos + 40;*/
+	
+									var player_j = {}
+									player_j.top = players[j].yPos;
+									player_j.left = players[j].xPos;
+									player_j.bottom = players[j].yPos+40;
+									player_j.right = players[j].xPos + 40;
+	
+									if (intersectRect(player_i_rectangle, player_j)) {
+								
+											players[j].health -= players[i].base_damage * ITEM_STATS[getItem(players[i].inventory[players[i].inventoryFocusIndex])][1];
+											players[i].hitSword = -1;
+
+									
+									}
+									else if (intersectRect(player_i_rectangle, player_j_rectangle)){
+
+									 players[i].hitSword = 1
+									 players[j].hitSword = 1;
+									}
+								}
+								else if (players[i].isMouseDown && contains2DArray(players[i].inventory, "arrow")){
+									shootArrow(players[i]);
+									players[i].hitSword = 1;
+								}
+						}
+							
+					}
+				}
+			}
+			
+				
 				for(var j = 0; j < creatures.length; j++){
 					if(typeof creatures[j] !== 'undefined'){
 						if(i != j){
+							var animal_rectangle = {};
+							animal_rectangle.top = creatures[j].yPos;
+							animal_rectangle.left = creatures[j].xPos;
+							animal_rectangle.bottom = creatures[j].yPos+40;
+							animal_rectangle.right = creatures[j].xPos + 40;
 							var distance = distFrom(players[i].xPos, players[i].yPos, creatures[j].xPos, creatures[j].yPos);
 							var angle = Math.atan2(creatures[j].yPos - players[i].yPos, creatures[j].xPos - players[i].xPos);
 							if(distance < ITEM_STATS[getItem(players[i].inventory[players[i].inventoryFocusIndex])][3]){
@@ -400,12 +481,14 @@ function solvePhysics(){
 				}
 			}
 
-			if(players[i].attackAnimationStep != 0){
-				if(players[i].attackAnimationStep > ITEM_STATS[getItem(players[i].inventory[players[i].inventoryFocusIndex])][2]*(60-2*players[i].intelligence_points)){
-					players[i].attackAnimationStep = 0;
-				}else{
-					players[i].attackAnimationStep++;
-				}
+			
+			if(players[i].hitSword == 1){
+				players.spinSword = true;
+				setTimeout(function(){players[i].hitSword = 0; }, ITEM_STATES[getItem(players[i].inventory[players[i].inventoryFocusIndex])][2]*3/4);
+			}
+			
+			if (players[i].hitSword == -1){
+				setTimeout(function(){ players[i].hitSword = 0; }, ITEM_STATES[getItem(players[i].inventory[players[i].inventoryFocusIndex])][2]);
 			}
 
 			if(players[i].isMouseDown){
