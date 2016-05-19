@@ -911,7 +911,8 @@ function isHiddenByShadow(currEdge, currObject, objectSize, q, offset){
 
 function packageAllGameData(q){
 		var player_knowledge = {};
-
+		
+		var player_projectiles = [];
 		var player_obstacles = [];
 		var player_players = [];
 		var player_items = [];
@@ -941,7 +942,12 @@ function packageAllGameData(q){
 				}
 			}
 		}
-
+		for (var r = 0; r < projectiles.length; r++){
+				if(distFrom(projectiles[r].xPos, projectiles[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
+				
+					player_projectiles.push(projectiles[r]);
+				}
+		}
 		for(var r = 0; r < creatures.length; r++){ //add to player knowledge any creatures in vision radius and add their edges
 			if(distFrom(creatures[r].xPos, creatures[r].yPos, players[q].xPos, players[q].yPos) < MAX_VISION_RADIUS){
 				player_creatures.push(creatures[r]);
@@ -1211,6 +1217,7 @@ function packageAllGameData(q){
 		player_knowledge.map_center_y = MAP_CENTER_Y;
 		player_knowledge.items = player_items;
 		player_knowledge.creatures = player_creatures;
+		player_knowledge.projectiles = player_projectiles;
 		player_knowledge.draw_length = MAX_VISION_RADIUS;
 		player_knowledge.shadows = shadows;
 
