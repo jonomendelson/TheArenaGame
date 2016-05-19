@@ -474,13 +474,13 @@ socket.on('all_game_data', function(data){
 			ctx.save(); 
 
 			
-			  ctx.translate(data.projectiles[i].xPos-cameraX, data.projectiles[i]yPos-cameraY);
+			  ctx.translate(data.projectiles[i].xPos-cameraX, data.projectiles[i].yPos-cameraY);
 
 			  ctx.rotate(angle-Math.PI/4);
 
 			 // draw it up and to the left by half the width
 			 // and height of the image 
-			 ctx.drawImage(arrow_icon, 0, 0);
+			 ctx.drawImage(arrow_icon, -20, -20);
 
 			 // and restore the co-ords to how they were when we began
 			  ctx.restore(); 
