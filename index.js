@@ -32,7 +32,9 @@ var BASE_STAMINA_REGEN = 0.5;
 var MAX_VISION_RADIUS = 600;
 
 //item name, damage multiplier (over basic attack), seconds before reuse, range
-var ITEM_STATS = [["", 1, 0.3, 90], ["dagger", 2, 0.4, 90], ["sword", 3, 0.7, 150], ["firstaid", 1, 0.8, 90], ["empty_bottle", 1, 0.8, 90], ["full_bottle", 1, 0.8, 90],	["meat", 1, 0.8, 90]];
+var ITEM_STATS = [["", 1, 0.3, 90], ["dagger", 2, 0.4, 90], ["sword", 3, 0.7, 150], ["firstaid", 1, 0.8, 90], ["empty_bottle", 1, 0.8, 90], ["full_bottle", 1, 0.8, 90],  ["meat", 1, 0.8, 90], /*bow has multiplier: 1, speed: .6, range: 1000 */ ["bow", 1, .6, 90], /*arrow acts like hand, but has an additional element that shows stack size(10 of them)*/["arrow", 1, 0.8, 90, 10]]; 
+
+var BOW_RANGE = 5000;
 
 var WOLF_MOVE_SPEED = 3.5;
 var PIG_MOVE_SPEED = 2;
@@ -157,7 +159,8 @@ function addNewPlayer(socket_id, username, brawn_points, intelligence_points, ag
 	player.hunger = 100;
 	player.thirst = 100;
 
-	player.attackAnimationStep = 0;
+	player.hitSword = 0;
+	player.spinSword = false;
 
 	player.player_knowledge = {};
 
@@ -186,6 +189,12 @@ function contains(list, element){
 		if (list[i] == element) return true;
 	}
 	return false
+}
+function intersectRect(r1, r2) {
+  return !(r2.left > r1.right || 
+           r2.right < r1.left || 
+           r2.top > r1.bottom ||
+           r2.bottom < r1.top);
 }
 function shootArrow(player){
 	var projectile = {};
